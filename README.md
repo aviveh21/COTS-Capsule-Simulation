@@ -1,4 +1,7 @@
 # Geant4-TAU-SAT
+
+### Update of 2022 - Aviv and Amir - The real COTS-Capsule###
+
 ## Compile
 Create a new `build` folder: `mkdir build`\
 Change dir to new folder: `cd build`\
