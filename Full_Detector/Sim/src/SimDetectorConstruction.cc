@@ -270,10 +270,17 @@ G4VPhysicalVolume* SimDetectorConstruction::Construct(){
   cuts->SetProductionCut(defCut,"e+");
   cuts->SetProductionCut(defCut,"proton");
   
-  fRegion->SetProductionCuts(cuts);
+  //fRegion->SetProductionCuts(cuts);
   //fRegion->AddRootLogicalVolume(logicTarget); 
-  //fRegion->AddRootLogicalVolume(logicTarget_2); 
+  //fRegion->AddRootLogicalVolume(logicTarget_2);
 
+// 08/01/22 Aviv tried to put the tracker on the scintilators
+
+  //fRegion->AddRootLogicalVolume(fMainVolume->GetLogScint());
+  //fRegion->AddRootLogicalVolume(fMainVolume2->GetLogScint());
+  //fRegion->AddRootLogicalVolume(fMainVolume3->GetLogScint());
+  //fRegion->AddRootLogicalVolume(fMainVolume4->GetLogScint());
+  //fRegion->AddRootLogicalVolume(fMainVolume5->GetLogScint());
 
   return fExperimentalHall_phys;
 }
@@ -296,6 +303,9 @@ void SimDetectorConstruction::ConstructSDandField() {
     std::vector<G4ThreeVector> total = fMainVolume->GetPmtPositions();
     auto a = fMainVolume2->GetPmtPositions();
     total.insert(total.end(), a.begin(), a.end());
+
+//01/01/22 - Shalev told me to change this for the PMT position
+
     auto b = fMainVolume3->GetPmtPositions();
     total.insert(total.end(), b.begin(), b.end());
     auto c = fMainVolume4->GetPmtPositions();
@@ -303,10 +313,7 @@ void SimDetectorConstruction::ConstructSDandField() {
     auto d = fMainVolume5->GetPmtPositions();
     total.insert(total.end(), d.begin(), d.end());
 
-//01/01/22 - Shalev told me to change this for the PMT position
-
-// AVIV 24/12/21 - NEED TO PUT HERE THE OTHER DETECTORS?
-
+// 08/01/22 "total" is a maarach with all the positions of tne PMTs for every scintilator
 
     pmt_SD->SetPmtPositions(total);
   }
@@ -334,13 +341,13 @@ void SimDetectorConstruction::ConstructSDandField() {
   G4SDManager::GetSDMpointer()->AddNewDetector(fScint_SD.Get());
   SetSensitiveDetector("scint_log", fScint_SD.Get(), true);
 
-  G4String trackerChamberSDname = "B2/TrackerChamberSD";
-  B2TrackerSD* aTrackerSD = new B2TrackerSD(trackerChamberSDname,
-                                            "TrackerHitsCollection");
- // G4SDManager::GetSDMpointer()->AddNewDetector(aTrackerSD);
+  //G4String trackerChamberSDname = "B2/TrackerChamberSD";
+  //B2TrackerSD* aTrackerSD = new B2TrackerSD(trackerChamberSDname,
+  //                                          "TrackerHitsCollection");
+  //G4SDManager::GetSDMpointer()->AddNewDetector(aTrackerSD);
   // Setting aTrackerSD to all logical volumes with the same name 
   // of "Chamber_LV".
- // SetSensitiveDetector("Target", aTrackerSD, true);
+  //SetSensitiveDetector("Target", aTrackerSD, true);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
