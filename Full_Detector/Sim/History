@@ -1,0 +1,257 @@
+-------------------------------------------------------------------
+
+     =========================================================
+     Geant4 - an Object-Oriented Toolkit for Simulation in HEP
+     =========================================================
+
+                    Sim History file
+                    ----------------
+This file should be used by the G4 example coordinator to briefly
+summarize all major modifications introduced in the code and keep
+track of all tags.
+
+     ----------------------------------------------------------
+     * Reverse chronological order (last date on top), please *
+     ----------------------------------------------------------
+
+November 10, 2018 V.Ivanchenko (Sim-V10-04-11)
+- SimDetectorConstruction - removed definition of random number
+  directory from the code, user may define thisvia UI command
+
+November 09, 2018 V.Ivanchenko (Sim-V10-04-10)
+- Fixed MT issue - random directory should not be set via Event
+  action, this functionality is moved to DetectorConstruction
+
+October 26, 2018 D. Sawkey (Sim-V10-04-09)
+- Restore .README.txt
+- removed unneeded direction named random
+
+May 17, 2018 J. Allison (Sim-V10-04-08)
+- Sim.cc: Removed remaining G4UI_USE and G4VIS_USE.
+
+May 17, 2018 J. Allison (Sim-V10-04-07)
+- Sim.cc: Instantiate vis manager always (including batch).
+
+May 15, 2018 D. Sawkey (Sim-V10-04-06)
+- update README, remove WALKTHROUGH
+- update Sim.cc use vis.mac, gui.mac if no command line args
+- update vis.mac
+- use nullptr throughout
+- remove redundant 'this'
+
+May 8, 2018 D. Sawkey (Sim-V10-04-05)
+- remove SimRecorderBase, replace with SimHistoManager
+
+May 8, 2018 B. Morgan (Sim-V10-04-04)
+- Include G4Types before use of G4MULTITHREADED. For forward
+  compatibility with move to #defines over -D for G4 preprocessor
+  symbols.
+
+May 3, 2018 D. Sawkey (Sim-V10-04-03)
+- Add SimRun to record, print results at end
+- Remove SimUserEventInformation, use SimEventAction instead
+- Use G4EmStandard_option4 EM physics
+
+May 1, 2018 D. Sawkey (Sim-V10-04-02)
+- replace local physics with FTFP_BERT + G4OpticalPhysics
+  - deleted SimEMPhysics, SimGeneralPhysics,SimMuonPhysics,SimPhysicsList
+- remove SimSteppingVerbose
+- cleaning of macros
+
+April 4, 2018 D. Sawkey (Sim-V10-04-01)
+- problem report 2042. 
+   Macros: remove /Sim/detector/update, add /run/initialize
+   SimDetectorConstruction: move DefineMaterials to ctor
+   SimGeneralPhysics, SimEMPhysics, SimMuonPhysics: construct particles in
+     SimGeneralPhysics using G4BosonConstructor etc
+
+March 6, 2018 P. Gumplinger (Sim-V10-04-00)
+- address problem report 2041
+
+May 31, 2017 P. Gumplinger (Sim-V10-03-00)
+- address problem report:
+  http://hypernews.slac.stanford.edu/HyperNews/geant4/get/opticalphotons/651/1/1/1.html
+
+November 19, 2016 A.Dotti  (Sim-V10-02-03)
+- explici set of SD to manager
+
+November 2, 2016 G.Folger (Sim-V10-02-02)
+- Remove icons.mac. Automatically include since interfaces-V10-02-07
+
+October 14, 2016 G.Folger (Sim-V10-02-01)
+- remove direct use of theParticleIterator, use GetParticleTableIterator().
+    fix required by clang39 on Linux and MAC
+
+July 04, 2016 I. Hrivnacova (Sim-V10-02-00)
+- Fixes for Doxygen documentation
+
+May 22, 2015 P. Gumplinger (Sim-V10-01-00)
+- apply coding guideline 3.3
+
+November 4, 2014 A. Dotti  (Sim-V10-00-08)
+- Add Proton and Neutron and pions to local Mu physics list
+  needed for mu- capture at rest process
+
+October 30, 2014 A. Dotti  (Sim-V10-00-07)
+- Use correct mu- stopping process
+
+October 28, 2014 A. Dotti  (Sim-V10-00-06)
+- Retagging.
+
+October 27, 2014 A. Dotti  (Sim-V10-00-05)
+- New UI commands structure. Requires 
+  xrays-V10-00-06, op-V10-00-09, phys-ctor-em-V10-00-17
+
+July 11, 2014 P. Gumplinger (Sim-V10-00-04)
+- Use implicit dimensioning for all arrays and assert that they are the
+  same (thanks to M. Kelsey for suggesting this)
+
+June 2, 2014 A. Dotti (Sim-V10-00-03)
+- Remove shared process pointers between threads.
+
+January 7, 2014 P. Gumplinger (Sim-V10-00-02)
+- reduce the size of the output file
+
+December 18, 2013 P. Gumplinger (Sim-V10-00-01)
+- rearrange /optics_engine commands in Sim.in according to what
+  is allowed when with phys-ctor-em-V10-00-01 (G4OpticalPhysics)
+
+December 04, 2013 P. Gumplinger (Sim-V10-00-00)
+- Fixes in gui.mac:
+  Commented out command specific to B2 example
+  Let execute vis.mac first to make the command in added menus available;
+  Corrected wireframe parameter
+
+November 28, 2013 P. Gumplinger (Sim-V09-06-17)
+- add icons.mac run.png
+
+November 27, 2013 P. Gumplinger (Sim-V09-06-15 and 16)
+- Fixed ConstructSDandField():
+  Moved setting the SD and field manager to logical volume outside the tests
+- Put back cleaning volumes and solid stores in Construct()
+- add gui.mac
+
+November 25, 2013 P. Gumplinger (Sim-V09-06-14)
+- Fixed compilation warnings for data not used in SimWLSFiber.hh and
+  SimWLSSlab.hh.
+
+November 25, 2013 P. Gumplinger (Sim-V09-06-13)
+- bug fix a divided by zero
+
+November 22, 2013 P. Gumplinger (Sim-V09-06-12)
+- replace Update method and commands with ReinitializeGeometry
+
+October 29, 2013 P. Gumplinger (Sim-V09-06-11)
+- remove all reference to SimWorkerInitialization and SetNumberOfThreads
+
+October 25, 2013 P. Gumplinger (Sim-V09-06-10)
+- Instantiate SteppingVerbose in a new method in SimActionInitialization
+  and removed SimWorkerInitialization (not needed anymore)
+
+September 20, 2013 Ivana Hrivnacova (Sim-V09-06-09)
+- Fixed setting of sensitive detectors to logical volumes
+
+September 13, 2013 Peter Gumplinger (Sim-V09-06-08)
+- apply all of Ivana's modifications to make the code MT ready
+
+July 16, 2013 Ivana Hrivnacova (Sim-V09-06-07)
+- Make SimTrajectoryAllocator thread local (required for MT)
+
+July 11, 2013 Ivana Hrivnacova (Sim-V09-06-06)
+- Added missing G4ThreadLocal keyword for the *HitAllocator definition
+  in SimPMTHit.cc, SimScintHit.cc
+
+May 27, 2013 P. Gumplinger (Sim-V09-06-05)
+- coding guideline - line length < 80 for SimSteppingMessenger
+  and SimEventMessenger
+
+Apr 05, 2013 P. Gumplinger (Sim-V09-06-04)
+- properly initialize fExpectedNextStatus at the first step
+
+Apr 05, 2013 P. Gumplinger (Sim-V09-06-03)
+- rename to aParticleIterator as per A. Dotti
+
+Apr 05, 2013 P. Gumplinger (Sim-V09-06-02)
+- fix geometry overlap
+
+Apr 01, 2013 A. Dotti (Sim-V09-06-01)
+- Migrate to new G4VUserPhysicsList interface needed for MT
+
+Dec 02, 2012 J.Allison (Sim-V09-06-00)
+  Migration to DrawTrajectory() (i_mode argument is no longer available):
+  o SimTrajectory.cc: Removed DrawTrajectory(G4int i_mode).
+  o SimEventAction.cc: Removed argument from DrawTrajectory().
+
+16 November 2012 Gunter Folger    (Sim-V09-05-02)
+- reduce size of Sim.out, and remove tracking/verbose 1, responsible for the 
+   size of the output
+
+14 November 2012 Ivana Hrivnacova (Sim-V09-05-01)
+- In vis.mac: OGLIX replaced with OGL
+
+18 September 2012 Ivana Hrivnacova
+- RecorderBase renamed to SimRecorderBase (by P. Gumplinger)
+  See also ../History for general changes
+
+20 June 2012 Peter Gumplinger (Sim-V09-05-00)
+- add debugging which will help spot when a wrong normal may have been returned
+
+08 November 2011 Peter Gumplinger (Sim-V09-04-00)
+- exercise the optics_engine in Sim.in
+
+03 June 2010 Peter Gumplinger    (Sim-V09-03-01)
+-  in SimEventAction.cc fix initialisation of G4ThreeVector required by 
+   CLHEP 2.1.x.
+   
+03 June 2010 Peter Gumplinger    (Sim-V09-03-00)
+-  modify SimTrajectory class to compile without warnings against
+   tracking-V09-03-03 by implementing a DrawTrajectory() method.
+
+09 November 2009 Peter Gumplinger (Sim-V09-02-01)
+- exhibit the usage of a complex index of refraction for the photo cathode
+  show usage of G4OpticalPhysics builder/messenger (instead of SimOpticalPhysics)
+
+30 October 2009 John Allison (Sim-V09-02-00)
+- Introduced G4UIExecutive.
+
+20 November 2008 Peter Gumplinger (Sim-V09-01-01)
+- update code in SimOpticalPhysics.cc
+
+16 July 2008 Peter Gumplinger (Sim-V09-01-00)
+- add Birks Constant for the Sim scintillator, Polystyrene scintillator
+  modified: SimDetectorConstruction.cc, SimOpticalPhysics.cc
+
+30 Sept 2007 Peter Gumplinger (Sim-V09-00-00)
+- adjust to the G4Cerenkov process now being a G4VDiscreteProcess
+
+14 Sept 2006 Peter Gumplinger (Sim-V08-01-00)
+- bug fix (889): set the pointers to G4MaterialPropertiesTable Sim_mt
+  and MPTPStyrene to NULL in the class constructor of SimDetectorConstruction.
+
+11 May 2006 Peter Gumplinger (Sim-V08-00-01)
+- thanks to Andreia Trindade and Pedro Rodrigues, the WLS time delay
+  can now be a delta function or exponential.
+
+15 March 2006 Peter Gumplinger (Sim-V08-00-00)
+- reinstate the logic between scintillator and fiber: scintillate at
+  short wavelength and WLS to long wavelength. This fixes log. error
+  introduced with Sim-V07-00-00
+
+27 June 2005 Peter Gumplinger (Sim-V07-00-00)
+- Fix material dependent input for AbsFiber
+
+3rd May 2005  John Allison  (examples-V07-00-03)
+- Replaced vis manager with G4VisExecutive.
+
+December 3rd, 2004 Gabriele Cosmo (Sim-V06-02-01)
+---------------------------------
+- Implemented migration to <cmath>.
+
+August 25th, 2004 Trevor MacPhail (Sim-V06-02-00)
+---------------------------------
+- fixed compilation error in SimSteppingVerbose.cc
+- fixed compilation warnings in SimPMTSD.cc, SimScintHit.cc, SimScintSD.cc
+
+May 31st, 2004 Trevor MacPhail (Sim-V06-01-00)
+------------------------------
+- First release of Sim setup for optical processes.

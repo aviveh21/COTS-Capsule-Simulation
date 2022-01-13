@@ -1,0 +1,20 @@
+#**************
+#**
+#** Demonstrates the basic functionality of this example by running a
+#** a single event with the default configuration
+#**
+#**************
+/run/verbose 1
+#/control/verbose 1
+#/tracking/verbose 1
+#/Sim/detector/MainScintYield 100
+#/process/optical/verbose 1
+/process/optical/processActivation Cerenkov false
+/run/initialize
+/Sim/saveThreshold 1000
+/Sim/pmtThreshold 2
+/Sim/eventVerbose 1
+#/Sim/forceDrawPhotons true #/Sim/forceDrawNoPhotons false
+/run/beamOn 1
+/process/optical/scintillation/setTrackSecondariesFirst false
+/run/beamOn 10
