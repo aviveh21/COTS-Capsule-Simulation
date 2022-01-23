@@ -33,7 +33,7 @@
 #include "SimScintSD.hh"
 #include "SimDetectorMessenger.hh"
 #include "SimMainVolume.hh"
-
+#include "SimRun.hh"
 #include "G4SDManager.hh"
 #include "G4RunManager.hh"
 
@@ -258,6 +258,55 @@ G4VPhysicalVolume* SimDetectorConstruction::Construct(){
     
   }
 
+  //Place the silicon!
+  //G4double TargetSizeZ = 0.3*mm;//0.2*um; 
+  //G4double TargetSizeX = 63.*mm;
+  //G4double TargetSizeY = 63.*mm;
+
+  //G4Box* targetSolid = new G4Box("Silicon_1",				     //its name
+	//			 TargetSizeX/2,TargetSizeY/2,TargetSizeZ/2);   //its size
+
+
+  //G4LogicalVolume *logicTarget = new G4LogicalVolume(targetSolid, //its solid
+  //                                                   fSiMaterial, //its material
+  //                                                   "Target");   //its name
+
+  //new G4PVPlacement(0,                                      //no rotation
+  //                  vSilicon1Location, //at (0,0,0)
+  //                  logicTarget,                            //its logical volume
+  //                  "Target",
+  //                  fExperimentalHall_log, //its mother  volume
+  //                  0,
+  //                  false, //no boolean operation
+  //                  0);    //copy number
+
+  // Visualization attributes
+  //G4VisAttributes* worldVisAtt1 = new G4VisAttributes(G4Colour(1.0,0.0,0.0)); 
+  //worldVisAtt1->SetVisibility(true);
+  //logicTarget->SetVisAttributes(worldVisAtt1);
+
+  //G4Box* targetSolid_2 = new G4Box("Silicon_2",				     //its name
+	//			 TargetSizeX/2,TargetSizeY/2,TargetSizeZ/2);   //its size
+
+  //G4LogicalVolume *logicTarget_2 = new G4LogicalVolume(targetSolid_2, //its solid
+  //                                                    fSiMaterial, //its material
+  //                                                    "Target");   //its name
+
+  //new G4PVPlacement(0,                                      //no rotation
+  //                  vSilicon2Location, //at (0,0,0)
+  //                  logicTarget_2,                            //its logical volume
+  //                  "Target",
+  //                  fExperimentalHall_log, //its mother  volume
+  //                  0,
+  //                  false, //no boolean operation
+  //                  0);    //copy number
+
+  // Visualization attributes
+  //worldVisAtt1 = new G4VisAttributes(G4Colour(1.0,0.0,0.0)); 
+  //worldVisAtt1->SetVisibility(true);
+  //logicTarget_2->SetVisAttributes(worldVisAtt1);
+
+
   // Create Target G4Region and add logical volume
   
   fRegion = new G4Region("Target");
@@ -270,7 +319,7 @@ G4VPhysicalVolume* SimDetectorConstruction::Construct(){
   cuts->SetProductionCut(defCut,"e+");
   cuts->SetProductionCut(defCut,"proton");
   
-  //fRegion->SetProductionCuts(cuts);
+  fRegion->SetProductionCuts(cuts);
   //fRegion->AddRootLogicalVolume(logicTarget); 
   //fRegion->AddRootLogicalVolume(logicTarget_2);
 
@@ -299,7 +348,7 @@ void SimDetectorConstruction::ConstructSDandField() {
     SimPMTSD* pmt_SD = new SimPMTSD("/SimDet/pmtSD");
     fPmt_SD.Put(pmt_SD);
 
-    pmt_SD->InitPMTs((4)*5); //let pmtSD know # of pmts
+    pmt_SD->InitPMTs(NUM_OF_PMTS); //let pmtSD know # of pmts
     std::vector<G4ThreeVector> total = fMainVolume->GetPmtPositions();
     auto a = fMainVolume2->GetPmtPositions();
     total.insert(total.end(), a.begin(), a.end());
