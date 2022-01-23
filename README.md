@@ -1,6 +1,8 @@
 # Geant4-TAU-SAT
 
 ### Update of 2022 - Aviv and Amir - The real COTS-Capsule## Compile
+
+### Patch 1 - the correct Detector
 Create a new `build` folder: `mkdir build`\
 Change dir to new folder: `cd build`\
 Run: \
