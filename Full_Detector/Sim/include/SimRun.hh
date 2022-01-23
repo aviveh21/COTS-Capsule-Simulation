@@ -37,7 +37,7 @@
 #include "FilePrinter.hh"
 #include "globals.hh"
 
-#define NUM_OF_PMTS (8)
+#define NUM_OF_PMTS (4*5)
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 class SimRun : public G4Run

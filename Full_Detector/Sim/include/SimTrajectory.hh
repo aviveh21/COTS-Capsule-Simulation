@@ -78,7 +78,7 @@ inline void* SimTrajectory::operator new(size_t)
 
 inline void SimTrajectory::operator delete(void* aTrajectory)
 {
-  SimTrajectoryAllocator->FreeSingle((SimTrajectory*)aTrajectory);
+  SimTrajectoryAllocator->FreeSingle((SimTrajectory*) aTrajectory);
 }
 
 #endif
