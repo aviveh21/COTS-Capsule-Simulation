@@ -196,10 +196,10 @@ void SimRun::EndOfRun()
   {
          std::vector<G4String> scint_loc;
          scint_loc.resize(4);
-         scint_loc[0] = "Top-Left";
-         scint_loc[1] = "Bottom-Right";
-         scint_loc[2] = "Top-Right";
-         scint_loc[3] = "Bottom-Left";
+         scint_loc[0] = "Top-Right";
+         scint_loc[1] = "Bottom-Left";
+         scint_loc[2] = "Bottom-Right";
+         scint_loc[3] = "Top-Left";
          for (size_t i = 0; i < NUM_OF_PMTS; i++)
          {
                 outFile << "Scintillator " << (i / 4) + 1 << ", PMT " << i << " (" << scint_loc[i % 4] << "): " << PMT[i] << std::endl;

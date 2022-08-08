@@ -243,9 +243,31 @@ void SimEventAction::EndOfEventAction(const G4Event* anEvent){
     G4cout << (*pmtHC).GetVector()->size() << G4endl;
     for (G4int i = 0; i < pmts; i++)
     {
+      int index=0;
+      int mod=0, div=0 ;
       G4cout << (*pmtHC)[i]->GetPMTPos() << G4endl;
       G4cout << "PMT-DATA: " << (*pmtHC)[i]->GetPMTPhysVol()->GetInstanceID() << " | " << (*pmtHC)[i]->GetPMTPhysVol()->GetTranslation() << " | " << (*pmtHC)[i]->GetPhotonCount() << G4endl;
-      pmts_vec[i] = (*pmtHC)[i]->GetPhotonCount();
+      
+      index = (*pmtHC)[i]->GetPMTPhysVol()->GetInstanceID();
+      index -= 4;
+      mod = index%17;
+      div = index/17;
+      switch (mod) {
+        case 3:
+          pmts_vec[mod+div*4-3] = (*pmtHC)[i]->GetPhotonCount();
+          break;
+        case 2:
+          pmts_vec[mod+div*4] = (*pmtHC)[i]->GetPhotonCount();
+          break;
+        case 1:
+          pmts_vec[mod+div*4] = (*pmtHC)[i]->GetPhotonCount();
+          break;
+        case 0:
+          pmts_vec[mod+div*4+3] = (*pmtHC)[i]->GetPhotonCount();
+          break;
+      }
+
+      //pmts_vec[mod+div*4] = (*pmtHC)[i]->GetPhotonCount();
     }
   }
 

@@ -33,6 +33,7 @@
 #include "SimScintSD.hh"
 #include "SimDetectorMessenger.hh"
 #include "SimMainVolume.hh"
+#include "SimBKF12.hh"
 #include "SimRun.hh"
 #include "G4SDManager.hh"
 #include "G4RunManager.hh"
@@ -146,6 +147,23 @@ void SimDetectorConstruction::DefineMaterials(){
   Ej200 = new G4Material("Ej200", density = 1.023 * g / cm3, 2);
   Ej200->AddElement(fC, 9);
   Ej200->AddElement(fH, 10);
+
+  //Epoxy (for the cover of each detector)
+
+  //Epoxy (for FR4 )
+  //G4Material* Epoxy = new G4Material("Epoxy" , density = 1.2*g/cm3, 2);
+  //Epoxy->AddElement(fH, 2);
+  //Epoxy->AddElement(fC, 2);
+
+  //another option
+  Epoxy = new G4Material("Epoxy",  density = 1.16*g/cm3, 4);
+  Epoxy->AddElement(fH, 32); // Hydrogen
+  Epoxy->AddElement(fN,  2); // Nitrogen
+  Epoxy->AddElement(fO,  4); // Oxygen
+  Epoxy->AddElement(fC, 15); // Carbon
+
+  
+
   //***Material properties tables
   const G4int NUMENTRIES = 12;
   G4double PhotonEnergy[NUMENTRIES] = {3.44 * eV, 3.26 * eV, 3.1 * eV, 3.02 * eV, 2.95 * eV,
@@ -160,7 +178,20 @@ void SimDetectorConstruction::DefineMaterials(){
   G4double SCINTILLATION_Ej200[NUMENTRIES] = {0.04, 0.07, 0.20, 0.49, 0.84,
                                               1.00, 0.83, 0.55, 0.40, 0.17,
                                               0.03, 0};
+  
+  //Included for Epoxy
+  G4double REFLECTIVENESS_Epoxy[NUMENTRIES] = {0.045, 0.045, 0.045, 0.045, 0.045,
+                                              0.045, 0.045, 0.045, 0.045, 0.045,
+                                              0.045, 0.045};
+  G4double RINDEX_Epoxy[NUMENTRIES] = {1.5, 1.5, 1.5, 1.5, 1.5,
+                                       1.5, 1.5, 1.5, 1.5, 1.5,
+                                       1.5, 1.5};
+  Epoxy_mt = new G4MaterialPropertiesTable();
+  Epoxy_mt->AddProperty("REFLECTIVITY",  PhotonEnergy, REFLECTIVENESS_Epoxy, NUMENTRIES);
+  Epoxy_mt->AddProperty("RINDEX", PhotonEnergy, RINDEX_Epoxy, NUMENTRIES);
+  Epoxy->SetMaterialPropertiesTable(Epoxy_mt);
 
+  //For EJ200
   Ej200_mt = new G4MaterialPropertiesTable();
   Ej200_mt->AddProperty("RINDEX", PhotonEnergy, RINDEX_Ej200, NUMENTRIES);
   Ej200_mt->AddProperty("ABSLENGTH", PhotonEnergy, ABSORPTION_Ej200, NUMENTRIES);
@@ -220,6 +251,9 @@ void SimDetectorConstruction::DefineMaterials(){
   G4NistManager * man = G4NistManager::Instance();
   G4Material * Si = man->FindOrBuildMaterial("G4_Si");
   fSiMaterial = Si;
+  G4NistManager * man_1 = G4NistManager::Instance();
+  G4Material * Al = man_1->FindOrBuildMaterial("G4_Al");
+  fAlMaterial = Al;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -229,9 +263,10 @@ G4VPhysicalVolume* SimDetectorConstruction::Construct(){
   if (fExperimentalHall_phys) { return fExperimentalHall_phys; }
 
   //The experimental hall walls are all 1m away from housing walls
+
   G4double expHall_x = fScint_x+fD_mtl+1.*m;
   G4double expHall_y = fScint_y+fD_mtl+1.*m;
-  G4double expHall_z = fScint_z+fD_mtl+1.5*m;
+  G4double expHall_z = detector_size_z*5.+1.5*m;
 
   //Create experimental hall
   fExperimentalHall_box
@@ -245,16 +280,33 @@ G4VPhysicalVolume* SimDetectorConstruction::Construct(){
 
   //Place the main volumes - scintillators!
   if(fMainVolumeOn){
+
+    
+
     fMainVolume
       = new SimMainVolume(0,G4ThreeVector(),fExperimentalHall_log,false,0,this);
+    //bkf_det1
+    //  = new SimBKF12(0,G4ThreeVector(),fExperimentalHall_log,false,0,this );
+
     fMainVolume2 
-      = new SimMainVolume(0, G4ThreeVector(0., 0., 1*0.64 * 2. * cm), fExperimentalHall_log, false, 0, this);
+      = new SimMainVolume(0, G4ThreeVector(0., 0., 1.0*detector_size_z), fExperimentalHall_log, false, 0, this);
+    //bkf_det2
+    //  = new SimBKF12(0,G4ThreeVector(0., 0., 1.0*detector_size_z),fExperimentalHall_log,false,0,this );
+
     fMainVolume3 
-      = new SimMainVolume(0, G4ThreeVector(0., 0., 2*0.64 * 2. * cm), fExperimentalHall_log, false, 0, this);
+      = new SimMainVolume(0, G4ThreeVector(0., 0., 2.0*detector_size_z), fExperimentalHall_log, false, 0, this);
+    //bkf_det3
+    //  = new SimBKF12(0,G4ThreeVector(0., 0., 2.0*detector_size_z),fExperimentalHall_log,false,0,this );
+
     fMainVolume4 
-      = new SimMainVolume(0, G4ThreeVector(0., 0., 3*0.64 * 2. * cm), fExperimentalHall_log, false, 0, this);
+      = new SimMainVolume(0, G4ThreeVector(0., 0., 3.0*detector_size_z), fExperimentalHall_log, false, 0, this);
+    //bkf_det4
+    //  = new SimBKF12(0,G4ThreeVector(0., 0., 3.0*detector_size_z),fExperimentalHall_log,false,0,this );
+
     fMainVolume5 
-      = new SimMainVolume(0, G4ThreeVector(0., 0., 4*0.64 * 2. * cm), fExperimentalHall_log, false, 0, this);
+      = new SimMainVolume(0, G4ThreeVector(0., 0., 4.0*detector_size_z), fExperimentalHall_log, false, 0, this);
+    //bkf_det5
+    //  = new SimBKF12(0,G4ThreeVector(0., 0., 4.0*detector_size_z),fExperimentalHall_log,false,0,this );
     
   }
 
@@ -306,6 +358,46 @@ G4VPhysicalVolume* SimDetectorConstruction::Construct(){
   //worldVisAtt1->SetVisibility(true);
   //logicTarget_2->SetVisAttributes(worldVisAtt1);
 
+
+// Place the Aluminium Cover Up of the Entire Detector (1 On top, 1 On bottom)
+
+
+
+  G4Box* AluminumSolid = new G4Box("Alcover_1",				     //its name
+				 AlcoverSizeX/2,AlcoverSizeY/2,AlcoverSizeZ/2);   //its size
+
+
+  G4LogicalVolume *logicAluminum_1 = new G4LogicalVolume(AluminumSolid, //its solid
+                                                     fAlMaterial, //its material
+                                                     "Alcover_1");   //its name
+
+  new G4PVPlacement(0,                                      //no rotation
+                    Alcover1Location, //at (0,0,0)
+                    logicAluminum_1,                            //its logical volume
+                    "Alcover_1",
+                    fExperimentalHall_log, //its mother  volume
+                    0,
+                    false, //no boolean operation
+                    0);    //copy number
+
+  G4LogicalVolume *logicAluminum_2 = new G4LogicalVolume(AluminumSolid, //its solid
+                                                     fAlMaterial, //its material
+                                                     "Alcover_2");   //its name
+
+  new G4PVPlacement(0,                                      //no rotation
+                    Alcover2Location, //at (0,0,0)
+                    logicAluminum_2,                            //its logical volume
+                    "Alcover_2",
+                    fExperimentalHall_log, //its mother  volume
+                    0,
+                    false, //no boolean operation
+                    0);    //copy number
+
+  // Visualization attributes
+  G4VisAttributes* worldVisAtt1 = new G4VisAttributes(G4Colour(1.0,0.0,0.0)); 
+  worldVisAtt1->SetVisibility(true);
+  logicAluminum_1->SetVisAttributes(worldVisAtt1);
+  logicAluminum_2->SetVisAttributes(worldVisAtt1);
 
   // Create Target G4Region and add logical volume
   
@@ -450,9 +542,29 @@ void SimDetectorConstruction::SetDefaults() {
   //Resets to default values
   fD_mtl=0.023188*cm;
 
+  //Scintilator
   fScint_x = 7.*cm;
   fScint_y = 7.*cm;
-  fScint_z = 0.64*cm;
+  fScint_z = 0.67*cm;
+  
+  //BKF12
+  epoxy_size_x= fScint_x;
+  epoxy_size_y= fScint_y;
+  epoxy_size_z= 0.001*cm;
+  aluminium_size_x=fScint_x;
+  aluminium_size_y=fScint_y;
+  aluminium_size_z=0.005*cm;
+  BKF12_size_z=epoxy_size_z*2.+aluminium_size_z;
+  
+
+  AlcoverSizeZ = 0.08*cm;//0.2*um; 
+  AlcoverSizeX = 7.*cm;
+  AlcoverSizeY = 7.*cm;
+  Space_Top=0.36*cm; // In a detector - Space between Scintilator to the BKF and Apoxy at the Top 
+  Space_Down=0.17*cm; // In a detector - Space between Scintilator to the BKF and Apoxy at the Bottom 
+  
+  //Full Detector
+  detector_size_z=fScint_z +Space_Down+Space_Top+BKF12_size_z*2.; // 1.214 cm
 
   fNx = 2;
   fNy = 1;
@@ -466,6 +578,9 @@ void SimDetectorConstruction::SetDefaults() {
   fMainVolumeOn = true;
   fMainVolume = nullptr;
   fSlab_z = 2.5*mm;
+  
+  Alcover1Location = G4ThreeVector(0., 0., ((Space_Top-Space_Down)/2.-fScint_z/2-AlcoverSizeZ/2.-BKF12_size_z-Space_Top)); // Z= -0.647cm // before the first Scintilator, including the apoxy and BKF12, the 0.004 is to put the alcover exectly after the Scintilator
+  Alcover2Location = G4ThreeVector(0., 0., ((Space_Top-Space_Down)/2.+4*detector_size_z+fScint_z/2+AlcoverSizeZ/2.+BKF12_size_z+Space_Down)); // Z= 5.503cm // After the last Scintilator, including the apoxy and BKF12, the 0.004 is to put the alcover exectly after the Scintilator
 
   vSilicon1Location = G4ThreeVector(0., 0., -0.64 * 2. * cm);
   vSilicon2Location = G4ThreeVector(0., 0., -0.64 * 4. * cm);
