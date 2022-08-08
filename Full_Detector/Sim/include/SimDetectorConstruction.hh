@@ -36,6 +36,7 @@ class G4VPhysicalVolume;
 class G4Box;
 class G4Tubs;
 class SimMainVolume;
+class SimBKF12;
 
 #include "G4Material.hh"
 #include "SimDetectorMessenger.hh"
@@ -85,6 +86,18 @@ class SimDetectorConstruction : public G4VUserDetectorConstruction
     G4double GetScintX() const {return fScint_x;}
     G4double GetScintY() const {return fScint_y;}
     G4double GetScintZ() const {return fScint_z;}
+    //new
+    G4double GetepoxyX() const {return epoxy_size_x;}
+    G4double GetepoxyY() const {return epoxy_size_y;}
+    G4double GetepoxyZ() const {return epoxy_size_z;}
+    G4double GetaluminiumX() const {return aluminium_size_x;}
+    G4double GetaluminiumY() const {return aluminium_size_y;}
+    G4double GetaluminiumZ() const {return aluminium_size_z;}
+    G4double Getspacedown() const {return Space_Down;}
+    G4double Getspacetop() const {return Space_Top;}
+
+    G4double GetdetectorsizeZ() const {return detector_size_z;}
+
     G4double GetHousingThickness() const {return fD_mtl;}
     G4double GetPMTRadius() const {return fOuterRadius_pmt;}
     G4double GetSlabZ() const {return fSlab_z;}
@@ -130,11 +143,14 @@ class SimDetectorConstruction : public G4VUserDetectorConstruction
     G4Material* fPethylene1;
     G4Material* fPethylene2;
     G4Material* Ej200;
+    G4Material* Epoxy;
 
     //Geometry
     G4double fScint_x;
     G4double fScint_y;
     G4double fScint_z;
+    G4double Space_Top;
+    G4double Space_Down;
     G4double fD_mtl;
     G4int fNx;
     G4int fNy;
@@ -145,26 +161,48 @@ class SimDetectorConstruction : public G4VUserDetectorConstruction
     G4double fRefl;
     G4bool fMainVolumeOn;
     G4double fSlab_z;
+    G4double epoxy_size_x;
+    G4double epoxy_size_y;
+    G4double epoxy_size_z;
+    G4double aluminium_size_x;
+    G4double aluminium_size_y;
+    G4double aluminium_size_z;
+    G4double BKF12_size_z;
+    G4double detector_size_z;
 
     SimMainVolume* fMainVolume;
     SimMainVolume* fMainVolume2;
     SimMainVolume* fMainVolume3;
     SimMainVolume* fMainVolume4;
     SimMainVolume* fMainVolume5;
+    SimMainVolume* fMainVolume6;
+
+    SimBKF12* bkf_det1;
+    SimBKF12* bkf_det2;
+    SimBKF12* bkf_det3;
+    SimBKF12* bkf_det4;
+    SimBKF12* bkf_det5;
 
     G4MaterialPropertiesTable* fSim_mt;
     G4MaterialPropertiesTable* Ej200_mt;
+    G4MaterialPropertiesTable* Epoxy_mt;
     G4MaterialPropertiesTable* fMPTPStyrene;
 
     //Sensitive Detectors
     G4Cache<SimScintSD*> fScint_SD;
     G4Cache<SimPMTSD*> fPmt_SD;
 
+    G4Material*        fAlMaterial;
     G4Material*        fSiMaterial;
     G4LogicalVolume*   fLogicWorld;  
     G4Box*             fSolidWorld;
     G4Region*          fRegion;
-
+    
+    G4double AlcoverSizeZ;
+    G4double AlcoverSizeX;
+    G4double AlcoverSizeY;
+    G4ThreeVector Alcover1Location ;
+    G4ThreeVector Alcover2Location ;
     G4ThreeVector vSilicon1Location;
     G4ThreeVector vSilicon2Location;
 };

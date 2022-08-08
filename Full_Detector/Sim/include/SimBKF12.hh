@@ -27,8 +27,8 @@
 /// \file optical/Sim/include/SimMainVolume.hh
 /// \brief Definition of the SimMainVolume class
 //
-#ifndef SimMainVolume_H
-#define SimMainVolume_H 1
+#ifndef SimBKF12_H
+#define SimBKF12_H 1
 
 #include "G4PVPlacement.hh"
 #include "G4Box.hh"
@@ -39,33 +39,22 @@
 
 #include "SimDetectorConstruction.hh"
 
-class SimMainVolume : public G4PVPlacement
+class SimBKF12 : public G4PVPlacement
 {
   public:
 
-    SimMainVolume(G4RotationMatrix *pRot,
+    SimBKF12(G4RotationMatrix *pRot,
                  const G4ThreeVector &tlate,
                  G4LogicalVolume *pMotherLogical,
                  G4bool pMany,
                  G4int pCopyNo,
                  SimDetectorConstruction* c);
 
-    G4LogicalVolume* GetLogPhotoCath() {return fPhotocath_log;}
-    G4LogicalVolume* GetLogScint()     {return fScint_log;}
-
-    std::vector<G4ThreeVector> GetPmtPositions() {return fPmtPositions;}
-
   private:
 
     void VisAttributes();
-    void SurfaceProperties();
 
-    void PlacePMTs(G4LogicalVolume* pmt_Log,
-                   G4RotationMatrix* rot,
-                   G4double &a, G4double &b, G4double da,
-                   G4double db, G4double amin, G4double bmin,
-                   G4int na, G4int nb,
-                   G4double &x, G4double &y, G4double &z, G4int &k);
+
 
     void CopyValues();
 
@@ -111,8 +100,6 @@ class SimMainVolume : public G4PVPlacement
     G4LogicalVolume* epoxy_log;
     G4LogicalVolume* aluminium_log;
 
-    // Sensitive Detectors positions
-    std::vector<G4ThreeVector> fPmtPositions;
 
 };
 
