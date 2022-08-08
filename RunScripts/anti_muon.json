@@ -1,6 +1,6 @@
 {
     "energies": [
-        1000
+        2000
     ],
     "positions": [
         [
@@ -13,12 +13,9 @@
         ]
     ],
     "particles": [
-        "proton"
+        "mu+"
     ],
     "ions": [
-        [
-            2, 4, 2
-        ]
     ],
-    "beamOn": 1
+    "beamOn": 1223
 }

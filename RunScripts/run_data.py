@@ -12,11 +12,11 @@ MOTHER_FOLDER = '/runs/'
 INPUT_FILE_NAME = 'input.txt'
 OUTPUT_FILE_NAME = 'test.txt'
 GEANT_EXE_LOCATION = '/home/aviveh/Code/new_detector/build/Sim'
-RUN_BEAM_ON = 100
+RUN_BEAM_ON = 2000
 
 COUNT_TIME = True
 
-NUMBER_OF_SLABS = 4
+NUMBER_OF_SLABS = 5
 
 
 def make_dir(path):
@@ -154,12 +154,14 @@ if __name__ == "__main__":
             output_lines = []
             row = next(reader)
             row.extend(['Run number'])
-            row.extend(['Silicon_2 enter location', 'Silicon_1 enter location'])
-            row.extend(['Scint_1 enter location', 'Scint_2 enter location', 'Number of photons created'])
-            row.extend(['Number of electron-hole pairs created in Silicon_1', 'Number of electron-hole pairs created in Silicon_2'])
+            #row.extend(['Silicon_2 enter location', 'Silicon_1 enter location'])
+            row.extend(['Scint_1 enter location', 'Scint_2 enter location', 'Scint_3 enter location' , 'Scint_4 enter location', 'Scint_5 enter location', 'Number of photons created'])
+            #row.extend(['Number of electron-hole pairs created in Silicon_1', 'Number of electron-hole pairs created in Silicon_2'])
             row.extend(['Photons absorbed in Scint_1 Top-Left', 'Photons absorbed in Scint_1 Bottom-Right', 'Photons absorbed in Scint_1 Top-Right', 'Photons absorbed in Scint_1 Bottom-Left'])
             row.extend(['Photons absorbed in Scint_2 Top-Left', 'Photons absorbed in Scint_2 Bottom-Right', 'Photons absorbed in Scint_2 Top-Right', 'Photons absorbed in Scint_2 Bottom-Left'])
-
+            row.extend(['Photons absorbed in Scint_3 Top-Left', 'Photons absorbed in Scint_3 Bottom-Right', 'Photons absorbed in Scint_3 Top-Right', 'Photons absorbed in Scint_3 Bottom-Left'])
+            row.extend(['Photons absorbed in Scint_4 Top-Left', 'Photons absorbed in Scint_4 Bottom-Right', 'Photons absorbed in Scint_4 Top-Right', 'Photons absorbed in Scint_4 Bottom-Left'])
+            row.extend(['Photons absorbed in Scint_5 Top-Left', 'Photons absorbed in Scint_5 Bottom-Right', 'Photons absorbed in Scint_5 Top-Right', 'Photons absorbed in Scint_5 Bottom-Left'])
             output_lines.append(row)
             for run_number, row in enumerate(reader):
                 actual_run_number = run_number + 1

@@ -71,42 +71,86 @@ def create_input_file(filepath, particle: str, ion: str, energy: str,
             f.write("/run/beamOn 1\n")
         make_dir(filepath + OUTPUT_FILE_NAME)
 
-
-def create_runs(input_data):
+#Aviv changed 01/07/22, to handle bunch of jsons
+#def create_runs(input_data):
+def create_runs(input_data,json_number):
     energies = input_data["energies"]
     positions = input_data["positions"]
     directions = input_data["directions"]
     particles = input_data["particles"]
     ions = input_data["ions"]
     beamOn = input_data["beamOn"]
+    file = open("mapping.csv", 'a', newline='')
+    if os.stat("mapping.csv").st_size == 0:
+        file.close()
+        with open("mapping.csv", 'w', newline='') as map_file:
+            run_writer = csv.writer(map_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+            run_writer.writerow(['Folder Number', 'Particle', 'Energy', 'Position', 'Direction'])
 
-    with open("mapping.csv", 'w', newline='') as map_file:
-        run_writer = csv.writer(map_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-        run_writer.writerow(['Folder Number', 'Particle', 'Energy', 'Position', 'Direction'])
-        i = 0
+            i = 0
 
-        for particle in particles:
-            subfolder_subname = MOTHER_FOLDER + particle + "/"
-            make_dir(subfolder_subname)
-            ions_lst = [(0, 0, 0)]
-            if particle == "ion":
-                ions_lst = ions
-            for ion in ions_lst:
-                for energy in energies:
-                    for pos in positions:
-                        for direct in directions:
-                            i+=1
-                            run_writer.writerow([i, particle_name(particle, ion), energy, pos, direct])
-                            subfolder_name = subfolder_subname + str(i)
-                            make_dir(subfolder_name)
-                            create_input_file(subfolder_name, particle, vec_to_str(ion), str(energy), vec_to_str(direct), vec_to_str(pos), beamOn)
+            for particle in particles:
+                #subfolder_subname = MOTHER_FOLDER + particle + str(int(json_number)) + "/"
+                subfolder_subname = MOTHER_FOLDER + particle + "/"
+                make_dir(subfolder_subname)
+                ions_lst = [(0, 0, 0)]
+                if particle == "ion":
+                    ions_lst = ions
+                for ion in ions_lst:
+                    for energy in energies:
+                        for pos in positions:
+                            for direct in directions:
+                                i+=1
+                                if json_number != 0:
+                                    run_writer.writerow([str(int(json_number)), particle_name(particle, ion), energy, pos, direct])
+                                    #Aviv changed 01/07/22, to handle bunch of jsons
+                                    #subfolder_name = subfolder_subname + str(i)
+                                    subfolder_name = subfolder_subname + str(int(json_number))
+                                else:
+                                    run_writer.writerow([i, particle_name(particle, ion), energy, pos, direct])
+                                    subfolder_name = subfolder_subname + str(i)
+
+                                make_dir(subfolder_name)
+                                create_input_file(subfolder_name, particle, vec_to_str(ion), str(energy), vec_to_str(direct), vec_to_str(pos), beamOn)
+    else:
+        file.close()
+        with open("mapping.csv", 'a+', newline='') as map_file:
+            run_writer = csv.writer(map_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+            #run_writer.writerow(['Folder Number', 'Particle', 'Energy', 'Position', 'Direction'])
+
+            i = 0
+
+            for particle in particles:
+                #subfolder_subname = MOTHER_FOLDER + particle + str(int(json_number)) + "/"
+                subfolder_subname = MOTHER_FOLDER + particle + "/"
+                make_dir(subfolder_subname)
+                ions_lst = [(0, 0, 0)]
+                if particle == "ion":
+                    ions_lst = ions
+                for ion in ions_lst:
+                    for energy in energies:
+                        for pos in positions:
+                            for direct in directions:
+                                i+=1
+                                if json_number != 0:
+                                    run_writer.writerow([str(int(json_number)), particle_name(particle, ion), energy, pos, direct])
+                                    #Aviv changed 01/07/22, to handle bunch of jsons
+                                    #subfolder_name = subfolder_subname + str(i)
+                                    subfolder_name = subfolder_subname + str(int(json_number))
+                                else:
+                                    run_writer.writerow([i, particle_name(particle, ion), energy, pos, direct])
+                                    subfolder_name = subfolder_subname + str(i)
+                                make_dir(subfolder_name)
+                                create_input_file(subfolder_name, particle, vec_to_str(ion), str(energy), vec_to_str(direct), vec_to_str(pos), beamOn)
 
 if __name__=="__main__":
     try:
         save_path = sys.argv[1]
         json_path = sys.argv[2]
+        #Aviv added new argument 01/07/22, to handle bunch of jsons
+        json_number = sys.argv[3]
     except IndexError:
-        print("Error parsing args: make_data.py [save_path] [input_json_path]")
+        print("Error parsing args: make_data.py [save_path] [input_json_path] [json_number]")
         exit(1)
     
     if os.path.exists(json_path):
@@ -122,4 +166,6 @@ if __name__=="__main__":
         exit(1)
 
     make_dir(MOTHER_FOLDER)
-    create_runs(json_data)
+    #Aviv changed 01/07/22, to handle bunch of jsons
+    #create_runs(json_data)
+    create_runs(json_data,json_number)
