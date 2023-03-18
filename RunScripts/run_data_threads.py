@@ -13,7 +13,7 @@ from thread_worker import Workers
 MOTHER_FOLDER = '/runs/'
 INPUT_FILE_NAME = 'input.txt'
 OUTPUT_FILE_NAME = 'test.txt'
-GEANT_EXE_LOCATION = '/home/aviveh/Code/new_detector/build/Sim'
+GEANT_EXE_LOCATION = '/home/aviv/geant4/build_prod/Sim' #need to change back to build_prod
 RUN_BEAM_ON = 2000
 
 COUNT_TIME = True
@@ -34,29 +34,96 @@ def get_locations(content, i, res, detector_size, scintilator_size , scint_1_cen
     global NUMBER_OF_SLABS
     const_slabs = NUMBER_OF_SLABS
     scint_zdim = [[] for j in range(const_slabs)]
-    enter_ordered = ['None']* const_slabs
+    #03/12/22 Aviv's edit to support split to 3 columns
+    #enter_ordered = ['']* const_slabs
+    enter_ordered = ['']* const_slabs * 3
+    exit_ordered = ['']* const_slabs * 3
+    total_energy = ['']* const_slabs
     for j in range(const_slabs):
         scint_zdim[j]= [scint_1_center-scintilator_size/2 + detector_size*j, scint_1_center+scintilator_size/2 + detector_size*j]
     #old_len = len(res)
     while i < len(content):
         i += 1
+        # if NUMBER_OF_SLABS == 0:
+        #     if "Total energy deposited" in content[i]:
+        #         total_energy = re.search("[0-9'.']+")
+        #         break
+        #     continue
         if "Enter Location" in content[i]: # or "Exit Location" in content[i]:
             if NUMBER_OF_SLABS == 0:
                 continue
-            # searching for the z-axis element, and than reversing the string so we find only the z-dim between the ',' and the ')', as there is another ',' before the first one
+            # searching for the z-axis element, and then reversing the string so we find only the z-dim between the ',' and the ')', as there is another ',' before the first one
             zdim_enter = re.search('\)(.*?)\,', content[i][16:][::-1]).group(1)[::-1]
             for j in range(const_slabs):
                 if float(zdim_enter)/10 <= (float(scint_zdim[j][1])+0.2) and float(zdim_enter)/10 >= (float(scint_zdim[j][0])-0.2):
                     enter_ordered[j] = content[i][16:]
             #res.append(content[i][16:])
+            #21/01/23 Aviv changed for the exit_location
+            # NUMBER_OF_SLABS -= 1
+        elif "Exit Location" in content[i]:
+            if NUMBER_OF_SLABS == 0:
+                continue
+            # searching for the z-axis element, and then reversing the string so we find only the z-dim between the ',' and the ')', as there is another ',' before the first one
+            zdim_exit = re.search('\)(.*?)\,', content[i][15:][::-1]).group(1)[::-1]
+            for j in range(const_slabs):
+                if float(zdim_exit)/10 <= (float(scint_zdim[j][1])+0.2) and float(zdim_exit)/10 >= (float(scint_zdim[j][0])-0.2):
+                    exit_ordered[j] = content[i][15:]
+                    #21/01/23 Aviv included total energy deposition
+                    if "Total energy deposited" in content[i+1]:
+                        x = re.search("[0-9'.']+", content[i+1])
+                        total_energy[j] = x.group(0) if x is not None else ''
+            #21/01/23 Aviv changed for the exit_location
             NUMBER_OF_SLABS -= 1
+            #21/01/23 Aviv included total energy deposition
+        # elif "Total energy deposited" in content[i]:
+        #     total_energy = re.search("[0-9'.']+")
         elif "Number of" in content[i]:
+            break
             #for j in range(const_slabs):
             #    if  not enter_ordered[j]:
             #        enter_ordered[j] = 'None'
-            break
+
     for j in range(const_slabs):
-        res.append(enter_ordered[j]) # MAYBE I need to loop on all the 5 options in enter_ordered
+        #03/12/22 Aviv changed to split the  3D enter location to a 3 column for each axis
+        #print (enter_ordered[j])
+        if enter_ordered[j] == '':
+            res.append('')
+            res.append('')
+            res.append('')
+        else:
+            xdim_enter = float(re.search('[(](.*?)[,]' , enter_ordered[j]).group(1))
+            res.append(xdim_enter)
+
+            ydim_enter = float(re.search('[,](.*?)[,]' , enter_ordered[j]).group(1))
+            res.append(ydim_enter)
+
+            zdim_enter = float(re.search('[)](.*?)[,]' , enter_ordered[j][::-1]).group(1)[::-1])
+            res.append(zdim_enter)
+    #21/01/23 Aviv included exit_location
+    for j in range(const_slabs):
+        if exit_ordered[j] == '':
+            res.append('')
+            res.append('')
+            res.append('')
+        else:
+            xdim_enter = float(re.search('[(](.*?)[,]' , exit_ordered[j]).group(1))
+            res.append(xdim_enter)
+
+            ydim_enter = float(re.search('[,](.*?)[,]' , exit_ordered[j]).group(1))
+            res.append(ydim_enter)
+
+            zdim_enter = float(re.search('[)](.*?)[,]' , exit_ordered[j][::-1]).group(1)[::-1])
+            res.append(zdim_enter)
+    #21/01/23 Aviv included total energy deposition
+    for j in range(const_slabs):
+        if total_energy[j] == '':
+            res.append('')
+        else:
+            res.append(total_energy[j])
+
+        #print (enter_ordered[j])
+        #res.append(enter_ordered[j]) #03/12/22 Aviv changed to split the  3D enter location to a 3 column for each axis
+
     # if len(res) < old_len + 2:  # in case the particle stopped in this slab
     #     res.append('None')
     return i
@@ -64,7 +131,10 @@ def get_locations(content, i, res, detector_size, scintilator_size , scint_1_cen
 def add_missing_slabs(res):
     global NUMBER_OF_SLABS
     while NUMBER_OF_SLABS > 0:
-        res.append('None') # enter
+        #03/12/22 Aviv's edit to support split to 3 columns
+        for i in range(3):
+            res.append('') # enter
+        #res.append('None') # enter
         # res.append('None') # exit
         NUMBER_OF_SLABS -= 1
 
@@ -140,7 +210,7 @@ if __name__ == "__main__":
     parser.add_argument("-parse", action='store_true')
     parser.add_argument("-dir", default='.')
     parser.add_argument("-j", default=1, type=int)
-    # 09/07/22 Aviv changed to support changes in number of slabs. ATTANTION - the default number is 5
+    # 09/07/22 Aviv changed to support changes in number of slabs. ATTENTION - the default number is 5
     parser.add_argument("-numofscints", default= 5 , type=int)
     parser.add_argument("-detsize", default=1.214 , type=float)
     parser.add_argument("-scintz", default= 0.67 , type=float)
@@ -198,8 +268,11 @@ if __name__ == "__main__":
             row = next(reader)
             row.extend(['Run number'])
             #row.extend(['Silicon_2 enter location', 'Silicon_1 enter location'])
-            row.extend(['Scint_1 enter location', 'Scint_2 enter location', 'Scint_3 enter location' , 'Scint_4 enter location', 'Scint_5 enter location', 'Number of photons created'])
-            #row.extend(['Number of electron-hole pairs created in Silicon_1', 'Number of electron-hole pairs created in Silicon_2'])
+            row.extend(['Scint_1 enter location[X]', 'Scint_1 enter location[Y]', 'Scint_1 enter location[Z]', 'Scint_2 enter location[X]', 'Scint_2 enter location[Y]', 'Scint_2 enter location[Z]', 'Scint_3 enter location[X]', 'Scint_3 enter location[Y]', 'Scint_3 enter location[Z]', 'Scint_4 enter location[X]', 'Scint_4 enter location[Y]', 'Scint_4 enter location[Z]', 'Scint_5 enter location[X]', 'Scint_5 enter location[Y]', 'Scint_5 enter location[Z]'])
+            row.extend(['Scint_1 exit location[X]', 'Scint_1 exit location[Y]', 'Scint_1 exit location[Z]', 'Scint_2 exit location[X]', 'Scint_2 exit location[Y]', 'Scint_2 exit location[Z]', 'Scint_3 exit location[X]', 'Scint_3 exit location[Y]', 'Scint_3 exit location[Z]', 'Scint_4 exit location[X]', 'Scint_4 exit location[Y]', 'Scint_4 exit location[Z]', 'Scint_5 exit location[X]', 'Scint_5 exit location[Y]', 'Scint_5 exit location[Z]'])
+            row.extend(['Total energy in this scint_1', 'Total energy in this scint_2','Total energy in this scint_3', 'Total energy in this scint_4','Total energy in this scint_5'])
+            row.extend(['Number of photons created'])
+        #row.extend(['Number of electron-hole pairs created in Silicon_1', 'Number of electron-hole pairs created in Silicon_2'])
             row.extend(['Photons absorbed in Scint_1 Top-Right', 'Photons absorbed in Scint_1 Bottom-Left', 'Photons absorbed in Scint_1 Bottom-Right', 'Photons absorbed in Scint_1 Top-Left'])
             row.extend(['Photons absorbed in Scint_2 Top-Right', 'Photons absorbed in Scint_2 Bottom-Left', 'Photons absorbed in Scint_2 Bottom-Right', 'Photons absorbed in Scint_2 Top-Left'])
             row.extend(['Photons absorbed in Scint_3 Top-Right', 'Photons absorbed in Scint_3 Bottom-Left', 'Photons absorbed in Scint_3 Bottom-Right', 'Photons absorbed in Scint_3 Top-Left'])

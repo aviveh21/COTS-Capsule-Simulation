@@ -2,6 +2,7 @@ import os
 import sys
 import csv
 import json
+import re
 
 MOTHER_FOLDER = "/runs/"
 INPUT_FILE_NAME = "input.txt"
@@ -85,7 +86,7 @@ def create_runs(input_data,json_number):
         file.close()
         with open("mapping.csv", 'w', newline='') as map_file:
             run_writer = csv.writer(map_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-            run_writer.writerow(['Folder Number', 'Particle', 'Energy', 'Position', 'Direction'])
+            run_writer.writerow(['Folder Number', 'Particle', 'Energy', 'Position[X]','Position[Y]','Position[Z]', 'Direction[X]','Direction[Y]','Direction[Z]'])
 
             i = 0
 
@@ -99,15 +100,32 @@ def create_runs(input_data,json_number):
                 for ion in ions_lst:
                     for energy in energies:
                         for pos in positions:
+                            # 03/12/22 Aviv's edit, to split "pos" and "direct" to 3 columns each, one for each dimension
+                            #xdim_pos = float(re.search('[(](.*?)[,]' , pos).group(1))
+                            #ydim_pos = float(re.search('[,](.*?)[,]' , pos).group(1))
+                            #zdim_pos = float(re.search('[)](.*?)[,]' , pos[::-1]).group(1)[::-1])
+                            xdim_pos = float(pos[0])
+                            ydim_pos = float(pos[1])
+                            zdim_pos = float(pos[2])
                             for direct in directions:
+                                #xdim_direct = float(re.search('[(](.*?)[,]' , direct).group(1))
+                                #ydim_direct = float(re.search('[,](.*?)[,]' , direct).group(1))
+                                #zdim_direct = float(re.search('[)](.*?)[,]' , direct[::-1]).group(1)[::-1])
+                                xdim_direct = float(direct[0])
+                                ydim_direct = float(direct[1])
+                                zdim_direct = float(direct[2])
                                 i+=1
                                 if json_number != 0:
-                                    run_writer.writerow([str(int(json_number)), particle_name(particle, ion), energy, pos, direct])
+                                    # 03/12/22 Aviv's edit, to split "pos" and "direct" to 3 columns each, one for each dimension
+                                    #run_writer.writerow([str(int(json_number)), particle_name(particle, ion), energy, pos, direct])
+                                    run_writer.writerow([str(int(json_number)), particle_name(particle, ion), energy, xdim_pos, ydim_pos,zdim_pos, xdim_direct, ydim_direct, zdim_direct])
                                     #Aviv changed 01/07/22, to handle bunch of jsons
                                     #subfolder_name = subfolder_subname + str(i)
                                     subfolder_name = subfolder_subname + str(int(json_number))
                                 else:
-                                    run_writer.writerow([i, particle_name(particle, ion), energy, pos, direct])
+                                    # 03/12/22 Aviv's edit, to split "pos" and "direct" to 3 columns each, one for each dimension
+                                    #run_writer.writerow([i, particle_name(particle, ion), energy, pos, direct])
+                                    run_writer.writerow([i, particle_name(particle, ion), energy, xdim_pos, ydim_pos,zdim_pos, xdim_direct, ydim_direct, zdim_direct])
                                     subfolder_name = subfolder_subname + str(i)
 
                                 make_dir(subfolder_name)
@@ -129,16 +147,33 @@ def create_runs(input_data,json_number):
                     ions_lst = ions
                 for ion in ions_lst:
                     for energy in energies:
+                        # 03/12/22 Aviv's edit, to split "pos" and "direct" to 3 columns each, one for each dimension
                         for pos in positions:
+                            #xdim_pos = float(re.search('[(](.*?)[,]' , pos).group(1))
+                            #ydim_pos = float(re.search('[,](.*?)[,]' , pos).group(1))
+                            #zdim_pos = float(re.search('[)](.*?)[,]' , pos[::-1]).group(1)[::-1])
+                            xdim_pos = float(pos[0])
+                            ydim_pos = float(pos[1])
+                            zdim_pos = float(pos[2])
                             for direct in directions:
+                                #xdim_direct = float(re.search('[(](.*?)[,]' , direct).group(1))
+                                #ydim_direct = float(re.search('[,](.*?)[,]' , direct).group(1))
+                                #zdim_direct = float(re.search('[)](.*?)[,]' , direct[::-1]).group(1)[::-1])
+                                xdim_direct = float(direct[0])
+                                ydim_direct = float(direct[1])
+                                zdim_direct = float(direct[2])
                                 i+=1
                                 if json_number != 0:
-                                    run_writer.writerow([str(int(json_number)), particle_name(particle, ion), energy, pos, direct])
+                                    # 03/12/22 Aviv's edit, to split "pos" and "direct" to 3 columns each, one for each dimension
+                                    #run_writer.writerow([str(int(json_number)), particle_name(particle, ion), energy, pos, direct])
+                                    run_writer.writerow([str(int(json_number)), particle_name(particle, ion), energy, xdim_pos, ydim_pos,zdim_pos, xdim_direct, ydim_direct, zdim_direct])
                                     #Aviv changed 01/07/22, to handle bunch of jsons
                                     #subfolder_name = subfolder_subname + str(i)
                                     subfolder_name = subfolder_subname + str(int(json_number))
                                 else:
-                                    run_writer.writerow([i, particle_name(particle, ion), energy, pos, direct])
+                                    # 03/12/22 Aviv's edit, to split "pos" and "direct" to 3 columns each, one for each dimension
+                                    #run_writer.writerow([i, particle_name(particle, ion), energy, pos, direct])
+                                    run_writer.writerow([i, particle_name(particle, ion), energy, xdim_pos, ydim_pos,zdim_pos, xdim_direct, ydim_direct, zdim_direct])
                                     subfolder_name = subfolder_subname + str(i)
                                 make_dir(subfolder_name)
                                 create_input_file(subfolder_name, particle, vec_to_str(ion), str(energy), vec_to_str(direct), vec_to_str(pos), beamOn)
