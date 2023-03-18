@@ -69,6 +69,7 @@ void SimScintSD::Initialize(G4HCofThisEvent* hitsCE){
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 G4bool SimScintSD::ProcessHits(G4Step* aStep,G4TouchableHistory* ){
+  static G4double fTotalEnergy = 0;
   G4double edep = aStep->GetTotalEnergyDeposit();
   if(edep==0.) return false; //No edep so dont count as hit
 
@@ -78,6 +79,7 @@ G4bool SimScintSD::ProcessHits(G4Step* aStep,G4TouchableHistory* ){
     std::stringstream& ss = FilePrinter::GetStreamForWrite();
     if (aStep->IsFirstStepInVolume() && preStep->GetStepStatus() == fGeomBoundary)
     {
+      fTotalEnergy = 0;
       ss << "Particle Volume: " << aStep->GetTrack()->GetVolume()->GetLogicalVolume()->GetName() << G4endl;
       ss << "Particle Name: " << aStep->GetTrack()->GetParticleDefinition()->GetParticleName() << G4endl;
       ss << "Enter Location: " << (preStep->GetPosition()) << G4endl;
@@ -86,12 +88,16 @@ G4bool SimScintSD::ProcessHits(G4Step* aStep,G4TouchableHistory* ){
       G4cout << "Enter Location: " << (preStep->GetPosition()) << G4endl;
     }
 
+    fTotalEnergy += edep;
+    G4cout << "Current step energy: " << edep/CLHEP::keV << G4endl;
+
     if (aStep->IsLastStepInVolume())
     {
       ss << "Particle Volume: " << aStep->GetTrack()->GetVolume()->GetLogicalVolume()->GetName() << G4endl;
       G4cout << "Particle Volume: " << aStep->GetTrack()->GetVolume()->GetLogicalVolume()->GetName() << G4endl;
       ss << "Exit Location: " << aStep->GetTrack()->GetPosition() << G4endl;
       G4cout << "Exit Location: " << aStep->GetTrack()->GetPosition() << G4endl;
+      G4cout << "Total energy deposited: " << fTotalEnergy / CLHEP::keV << G4endl;
     }
   }
 
