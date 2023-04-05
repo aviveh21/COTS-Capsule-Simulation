@@ -13,7 +13,7 @@ from thread_worker import Workers
 MOTHER_FOLDER = '/runs/'
 INPUT_FILE_NAME = 'input.txt'
 OUTPUT_FILE_NAME = 'test.txt'
-GEANT_EXE_LOCATION = '/home/aviv/geant4/build_prod/Sim' #need to change back to build_prod
+GEANT_EXE_LOCATION = '/home/ubuntu/build_sim/Sim' #need to change back to build_prod
 RUN_BEAM_ON = 2000
 
 COUNT_TIME = True

@@ -12,7 +12,10 @@ import subprocess
 import json
 # for math calcutaions
 import numpy as np
-
+import logging
+import boto3
+from botocore.exceptions import ClientError
+import os
 from make_data import particle_name
 
 # import Full_Detector/Sim/src/SimDetectorConstruction.cc
@@ -20,12 +23,12 @@ from make_data import particle_name
 
 
 # importent paths
-results_folder = "/home/aviv/geant4/RunScripts/new_run"
+results_folder = "/home/ubuntu/COTS-Capsule-Simulation/RunScripts/new_run"
 # data_to_be_run_path = "example_one_song_hero.json"
 make_data_script = "./make_data.py"
 run_simulator_script = "run_data_threads.py"
-
-
+s3_uri =  "geant4-sim"
+s3_arn = "aws:s3:::geant4-sim"
 # Functions
 
 def pick_point_on_sphere(r, center):
@@ -61,6 +64,27 @@ def pick_point_cuboid(corner_far_z, corner_close_z, Alcover_x, Alcover_y):
     position = np.array([x, y, z])
     return position
 
+def upload_file(file_name, bucket, object_name=None):
+    """Upload a file to an S3 bucket
+
+    :param file_name: File to upload
+    :param bucket: Bucket to upload to
+    :param object_name: S3 object name. If not specified then file_name is used
+    :return: True if file was uploaded, else False
+    """
+
+    # If S3 object_name was not specified, use file_name
+    if object_name is None:
+        object_name = os.path.basename(file_name)
+
+    # Upload the file
+    s3_client = boto3.client('s3')
+    try:
+        response = s3_client.upload_file(file_name, bucket, object_name)
+    except ClientError as e:
+        logging.error(e)
+        return False
+    return True
 
 # data randomizer
 
@@ -99,11 +123,11 @@ if __name__ == "__main__":
     ### random particle and energy from the cosmic ray radiation
     # particle = "mu-"
     population_particles = ["proton", "alpha", "e-", "ion_carbon", "ion_oxygen", "ion_iron"]
-    weights_particles = [0.5, 0.3, 0, 0.1, 0.1, 0]
+    weights_particles = [1, 0, 0, 0, 0, 0]
 
     # energy = uniform(500,2000) # The randomness is in the loop
 
-    total_runs = 200
+    total_runs = 1
     ### for loop to randomize 100 particles 
 
     for x in range(total_runs):
@@ -173,3 +197,8 @@ if __name__ == "__main__":
     subprocess.run(
         f"python3 {run_simulator_script} -j {number_of_threads} -dir {results_folder} -numofscints {NUMBER_OF_SLABS} -detsize {detector_size_z}  -scintz {scint_z} -centerscint {center_z_first_scint} -parse",
         shell=True)
+    # upload csv to S3
+    #s3 = boto3.client('s3')
+    #with open("new_run/final_results.csv","rb") as f:
+        #s3.upload_fileobj(f,s3_uri)
+    upload_file("new_run/final_results.csv",s3_uri)
