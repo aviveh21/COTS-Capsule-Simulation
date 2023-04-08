@@ -22,15 +22,15 @@ from make_data import particle_name
 # import Full_Detector/Sim/src/SimDetectorConstruction.cc
 # import Full_Detector/Sim/src/SimDetectorConstruction.hh
 
-HOME_DIR = "."   # Not needed unless we want it hardcoded.
+WORKING_DIR = "."   # Not needed unless we want it hardcoded.
 
 # importent paths
-results_folder = HOME_DIR + "/new_run"
+results_folder = WORKING_DIR + "/new_run"
 # data_to_be_run_path = "example_one_song_hero.json"
-make_data_script = HOME_DIR + "/make_data.py"
-run_simulator_script = HOME_DIR + "/run_data_threads.py"
+make_data_script = WORKING_DIR + "/make_data.py"
+run_simulator_script = WORKING_DIR + "/run_data_threads.py"
 s3_uri =  "geant4-sim"
-LOG_PATH = HOME_DIR + "/run_script_Cosmic_Ray_Sim.log"
+LOG_PATH = WORKING_DIR + "/run_script_Cosmic_Ray_Sim.log"
 # s3_arn = "aws:s3:::geant4-sim"
 # Functions
 
@@ -99,9 +99,6 @@ def upload_file(file_name, bucket, object_name=None):
 
 if __name__ == "__main__":
 
-
-    # Set the working directory to be the directory of the script
-    os.chdir(os.path.dirname(sys.argv[0]))
 
     number_of_threads = 4
 
