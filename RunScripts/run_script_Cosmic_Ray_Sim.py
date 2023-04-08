@@ -111,7 +111,7 @@ if __name__ == "__main__":
     try:
         opts, args = getopt.getopt(sys.argv[1:],"",['aws-bucket=', 'sim-type='])
     except getopt.GetoptError as err:
-        logging.info("%s bad parameters", sys.argv[0])
+        logging.info("%s bad parameters %s", sys.argv[0], err)
         sys.exit(2)
 
     for opt, arg in opts:

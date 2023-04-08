@@ -45,7 +45,7 @@ def read_config_and_start_service_loop(filename):
 
 def start_simulation_and_exit(aws_bucket_name, sim_type):
 
-    args = [SIMULATION_PATH, "--aws-bucket ", aws_bucket_name, "--sim-type" ,sim_type]
+    args = [SIMULATION_PATH, "--aws-bucket", aws_bucket_name, "--sim-type" ,sim_type]
 
     ret = subprocess.run(args, capture_output=True)
 
