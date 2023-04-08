@@ -29,7 +29,7 @@ results_folder = WORKING_DIR + "/new_run"
 # data_to_be_run_path = "example_one_song_hero.json"
 make_data_script = WORKING_DIR + "/make_data.py"
 run_simulator_script = WORKING_DIR + "/run_data_threads.py"
-s3_uri =  "geant4-sim"
+# s3_uri =  "geant4-sim"
 LOG_PATH = WORKING_DIR + "/run_script_Cosmic_Ray_Sim.log"
 # s3_arn = "aws:s3:::geant4-sim"
 # Functions
@@ -99,8 +99,27 @@ def upload_file(file_name, bucket, object_name=None):
 
 if __name__ == "__main__":
 
+    init_logging()
     # Set working dir to script's location
     os.chdir(os.path.dirname(sys.argv[0]))
+
+    sim_type = 'default'
+    aws_bucket = False
+
+    try:
+        opts, args = getopt.getopt(sys.argv[1:],"",['aws-bucket=', 'sim-type='])
+    except getopt.GetoptError as err:
+        logging.info("%s bad parameters", sys.argv[0])
+        sys.exit(2)
+
+    for opt, arg in opts:
+        if opt == '--aws-bucket':
+            aws_bucket = arg
+        elif opt == '--sim-type':
+            sim_type = arg
+        else:
+            logging.error("%s bad parameter %s", sys.argv[0], opt)
+            sys.exit(2)
 
     number_of_threads = 4
 
@@ -211,4 +230,9 @@ if __name__ == "__main__":
     #s3 = boto3.client('s3')
     #with open("new_run/final_results.csv","rb") as f:
         #s3.upload_fileobj(f,s3_uri)
-    upload_file("new_run/final_results.csv",s3_uri)
+    if aws_bucket is not False:
+        logging.info("Uploading file to S3 bucket %s", aws_bucket)
+        upload_file("new_run/final_results.csv", aws_bucket, "final_results_" + sim_type + "_" + now.strftime("%m%d%Y%H_%M_%S"))
+
+
+
