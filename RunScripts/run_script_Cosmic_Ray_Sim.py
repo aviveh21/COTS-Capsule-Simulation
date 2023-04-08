@@ -99,9 +99,9 @@ def upload_file(file_name, bucket, object_name=None):
 
 if __name__ == "__main__":
 
-    init_logging()
-    # Set working dir to script's location
+   # Set working dir to script's location
     os.chdir(os.path.dirname(sys.argv[0]))
+    init_logging()
 
     sim_type = 'default'
     aws_bucket = False
