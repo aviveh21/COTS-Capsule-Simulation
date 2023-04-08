@@ -15,7 +15,7 @@ import configparser
 
 CONFIG_PATH = "data_service/config.ini"
 LOG_PATH = "data_service/data_service.log"
-SIMULATION_PATH = "RunScripts/run_scriptCosmic_Ray_Sim.py"
+SIMULATION_PATH = "RunScripts/run_script_Cosmic_Ray_Sim.py"
 DAEMON = True
 
 
