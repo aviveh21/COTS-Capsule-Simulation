@@ -13,10 +13,6 @@ if [ $# -eq 2 ]; then
     if [ "$2" = "dry-run" ]; then
     	echo "Running in dry-run mode".
     	DRY_RUN="--dry-run"
-    elif [ "$2" = "rebuild" ]; then
-        REBUILD=1
-    elif [ "$2" = "restart" ]; then
-        RESTART_FEBDRV=1
     fi
 fi   
 
@@ -25,7 +21,7 @@ SSH_KEY="$SCRIPT_DIR/ssh_keys/alex_key.pem"
 
 RSYNC_OPTS="-avz --no-perms --no-owner --progress --no-group $DRY_RUN"
 
-echo "Syncing local directories (no conf)"
+echo "Syncing local directories (no /etc)"
 rsync $RSYNC_OPTS --exclude-from="$SCRIPT_DIR"/exclude_sync -e "ssh -i $SSH_KEY" $SCRIPT_DIR/ ubuntu@$ip:~/COTS-Capsule-Simulation/
 
 echo "Syncing /etc" 
