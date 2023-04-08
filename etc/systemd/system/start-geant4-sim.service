@@ -1,0 +1,13 @@
+[Unit]
+Description=Loop until geant4 config file is found and simulations tarted
+Before=network.target
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/home/ubuntu/COTS-Capsule-Simulation
+ExecStart=/home/ubuntu/COTS-Capsule-Simulation/data_service/data_service.py
+StandardOutput=journal
+
+[Install]
+WantedBy=multi-user.target
