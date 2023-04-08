@@ -1,0 +1,8 @@
+#!/bin/bash
+
+mkdir -p /home/ubuntu/COTS-Capsule-Simulation/data_service
+tee -a //home/ubuntu/COTS-Capsule-Simulation/data_service/config.ini <<EOF
+[DEFAULT] 
+AWS_BUCKET=geant4-sim
+SIMULATION_TYPE=blabla_test
+EOF
