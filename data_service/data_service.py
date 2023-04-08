@@ -32,7 +32,7 @@ def check_config_file_exists(filename):
 def read_config_and_start_service_loop(filename):
 
     while not check_config_file_exists(filename):
-        logging.info("No configuration file found, sleeping 60 seconds")
+        logging.info("No configuration file found %s, sleeping 60 seconds", filename)
         time.sleep(60)
 
     config = configparser.ConfigParser()
