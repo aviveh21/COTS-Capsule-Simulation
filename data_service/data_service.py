@@ -13,10 +13,9 @@ import configparser
 
 # This service checks if a config file name exists. If it does, the simulation is started. Otherwise, sleep for 1 minute
 
-
-CONFIG_PATH = "/home/ubuntu/COTS-Capsule-Simulation/data_service/config.ini"
-LOG_PATH = "/home/ubuntu/COTS-Capsule-Simulation/data_service/data_service.log"
-SIMULATION_PATH = "/home/ubuntu/COTS-Capsule-Simulation/data_service/run_script.py"
+CONFIG_PATH = "config.ini"
+LOG_PATH = "data_service.log"
+SIMULATION_PATH = "../RunScripts/run_scriptCosmic_Ray_Sim.py"
 DAEMON = True
 
 
@@ -62,6 +61,9 @@ def main():
 
 
 if __name__ == "__main__":
+    # Set the working directory to be the directory of the script
+
+    os.chdir(os.path.dirname(sys.argv[0]))
     main()
 
 
