@@ -18,6 +18,7 @@ import boto3
 from botocore.exceptions import ClientError
 import os
 import sys
+import getopt
 from make_data import particle_name
 
 # import Full_Detector/Sim/src/SimDetectorConstruction.cc
