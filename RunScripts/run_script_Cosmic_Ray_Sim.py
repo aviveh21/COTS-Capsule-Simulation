@@ -99,6 +99,7 @@ def upload_file(file_name, bucket, object_name=None):
 
 if __name__ == "__main__":
 
+    os.chdir(os.path.dirname(sys.argv[0]))
 
     number_of_threads = 4
 
