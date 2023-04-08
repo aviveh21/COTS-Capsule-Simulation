@@ -1,0 +1,9 @@
+ssh_keys
+etc
+.git
+.DS_Store
+exclude_sync
+run_instance.sh
+init_geant_config_script.txt
+sync.sh
+Full_Detector
