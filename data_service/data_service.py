@@ -13,7 +13,7 @@ import configparser
 
 # This service checks if a config file name exists. If it does, the simulation is started. Otherwise, sleep for 1 minute
 
-CONFIG_PATH = "data_serivce/config.ini"
+CONFIG_PATH = "data_service/config.ini"
 LOG_PATH = "data_service/data_service.log"
 SIMULATION_PATH = "RunScripts/run_scriptCosmic_Ray_Sim.py"
 DAEMON = True
