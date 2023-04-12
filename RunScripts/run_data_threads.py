@@ -1,3 +1,6 @@
+#!/usr/bin/python3
+
+
 import os
 import sys
 import subprocess
@@ -7,16 +10,21 @@ import pathlib
 import time
 import argparse
 import queue
+import logging
 from typing import Pattern
 from thread_worker import Workers
 
-MOTHER_FOLDER = '/runs/'
+MOTHER_FOLDER = '/runs'
 INPUT_FILE_NAME = 'input.txt'
 OUTPUT_FILE_NAME = 'test.txt'
-GEANT_EXE_LOCATION = '/home/ubuntu/build_sim/Sim' #need to change back to build_prod
+GEANT_EXE_LOCATION = 'Sim.sh' #need to change back to build_prod
 RUN_BEAM_ON = 2000
 
 COUNT_TIME = True
+
+
+def init_logging():
+    logging.basicConfig(filename="run_data_threads.log", level=logging.INFO, format='%(asctime)s, %(message)s',datefmt='%Y-%m-%d, %H:%M:%S')
 
 NUMBER_OF_SLABS = 5
 start = time.time()
@@ -202,9 +210,13 @@ def get_run_number(run_dir):
 def worker_func(run_dir):
     # os.chdir(run_dir)
     with open(f"{run_dir}/run_stdout.txt", 'w') as out_fd:
-        subprocess.run(f"cd {run_dir} && {GEANT_EXE_LOCATION} {INPUT_FILE_NAME}", stdout=out_fd, shell=True)
+        logging.info("Running %s %s", GEANT_EXE_LOCATION, run_dir + "/" + INPUT_FILE_NAME)
+        geant_exe_full_path = os.path.abspath(GEANT_EXE_LOCATION)  
+        # Must use absolute path of geant, since we change the working directory
+        subprocess.run([geant_exe_full_path, run_dir + "/" + INPUT_FILE_NAME], stdout=out_fd, cwd=run_dir)
 
 if __name__ == "__main__":
+    init_logging()
     parser = argparse.ArgumentParser()
     parser.add_argument("-run", action='store_true')
     parser.add_argument("-parse", action='store_true')
@@ -219,9 +231,9 @@ if __name__ == "__main__":
 
     save_path = args.dir
     if os.path.exists(save_path):
-        os.chdir(save_path)
-        save_path = str(pathlib.Path().absolute())
-        MOTHER_FOLDER = save_path + MOTHER_FOLDER
+   #     os.chdir(save_path)
+        save_path = str(pathlib.Path().absolute()) 
+        MOTHER_FOLDER = save_path + "/" + args.dir + MOTHER_FOLDER
     else:
         print(f"Directory {save_path} does not exists!")
         exit(1)
@@ -236,7 +248,7 @@ if __name__ == "__main__":
     simulation_data = dict()
     for run_dir, _, filename in os.walk(os.getcwd()):
         if INPUT_FILE_NAME in filename:
-            os.chdir(run_dir)
+ #           os.chdir(run_dir)
             if args.run:
                 queue.put(run_dir)
                 # with open("run_stdout.txt", 'w') as out_fd:
@@ -257,10 +269,9 @@ if __name__ == "__main__":
         print(end_time - start_time, " seconds")
         exit(0)
     #print(" Got Here horray!")
-    os.chdir(save_path)  # return to script folder
-
+ #   os.chdir(save_path)  # return to script folder
     with open("{}/mapping.csv".format(save_path),'r') as csvinput:
-        with open("{}/final_results.csv".format(save_path), 'w') as csvoutput:
+        with open("{}/final_results.csv".format(save_path + "/" + args.dir), 'w') as csvoutput:
             writer = csv.writer(csvoutput, lineterminator='\n')
             reader = csv.reader(csvinput)
 
@@ -298,5 +309,5 @@ if __name__ == "__main__":
             #output_lines.append(["Current run took: ", total_time])
             writer.writerows(output_lines)
 
-print(end_time - start_time, " seconds")
+logging.info("Time: %s seconds", str(end_time - start_time))
 
