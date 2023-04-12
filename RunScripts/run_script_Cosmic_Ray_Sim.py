@@ -152,14 +152,16 @@ if __name__ == "__main__":
     ## making data
 
     ### random particle and energy from the cosmic ray radiation
-    # particle = "mu-"
-    population_particles = ["proton", "alpha", "e-", "ion_carbon", "ion_oxygen", "ion_iron"]
-    weights_particles = [1, 0, 0, 0, 0, 0]
-
-    # energy = uniform(500,2000) # The randomness is in the loop
-
-    total_runs = 1
-    ### for loop to randomize 100 particles 
+    if sim_type == 'high_mem':
+        population_particles = ["ion_neon","ion_magnesium","ion_silicon","ion_iron"]
+        weights_particles = [0.2, 0.2,0.2, 0.4]
+        total_runs = 1000
+        
+    else:
+        population_particles = ["proton", "alpha","lituium","carbon","oxygen", "e-", "e+", "mu-", "mu+","gamma"]
+        weights_particles = [0.3, 0.3, 0.1, 0.1, 0.1, 0.02,0.02,0.02,0.02,0.02]
+        total_runs = 100000
+    ### for loop to randomize all the particles 
 
     for x in range(total_runs):
         json_number = x + 1
@@ -180,24 +182,55 @@ if __name__ == "__main__":
         ### randomizing the particle and the energy
 
         particle = choices(population_particles, weights_particles)[0]
-        if particle == "ion_carbon":
+        if particle == "ion_lithium":
+            particle = "ion"
+            ion = [3, 6, 3]
+            energy = uniform(300, 4000)
+        elif particle == "ion_carbon":
             particle = "ion"
             ion = [6, 12, 6]
-            energy = uniform(700, 2500)
+            energy = uniform(700, 11000)
         elif particle == "ion_oxygen":
             particle = "ion"
             ion = [8, 16, 8]
-            energy = uniform(700, 2500)
+            energy = uniform(1000, 18000)
+        elif particle == "ion_neon":
+            particle = "ion"
+            ion = [10, 20, 10]
+            energy = uniform(1500, 25000)
+        elif particle == "ion_magnesium":
+            particle = "ion"
+            ion = [12, 24, 12]
+            energy = uniform(2000, 35000)
+        elif particle == "ion_silicon":
+            particle = "ion"
+            ion = [14, 28, 14]
+            energy = uniform(2500, 50000)
         elif particle == "ion_iron":
             particle = "ion"
             ion = [26, 52, 26]
-            energy = uniform(7000, 15000)
+            energy = uniform(7000, 150000)
         elif particle == "proton":
             ion = []
-            energy = uniform(500, 2000)
+            energy = uniform(50, 2000)
         elif particle == "alpha":
             ion = []
-            energy = uniform(150, 1000)
+            energy = uniform(100, 3000)
+        elif particle == "e-":
+            ion = []
+            energy = uniform(500, 10000)
+        elif particle == "e+":
+            ion = []
+            energy = uniform(500, 10000)
+        elif particle == "mu-":
+            ion = []
+            energy = uniform(5000, 7000)
+        elif particle == "mu+":
+            ion = []
+            energy = uniform(5000, 7000)
+        elif particle == "gamma":
+            ion = []
+            energy = uniform(100, 10000)
 
         ### creating python dict to before making it a json
         new_particle = {
