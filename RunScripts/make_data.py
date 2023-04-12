@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 import os
 import sys
 import csv
@@ -195,7 +197,8 @@ if __name__=="__main__":
         exit(1)
     
     if os.path.exists(save_path):
-        os.chdir(save_path)
+        # Save_pass is relative to working_dir. Do not play with this shit!
+#        os.chdir(save_path)
         MOTHER_FOLDER = save_path + MOTHER_FOLDER
     else:
         exit(1)

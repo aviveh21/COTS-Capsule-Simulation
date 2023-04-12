@@ -20,6 +20,9 @@ import os
 import sys
 import getopt
 from make_data import particle_name
+from datetime import datetime
+import configparser
+
 
 # import Full_Detector/Sim/src/SimDetectorConstruction.cc
 # import Full_Detector/Sim/src/SimDetectorConstruction.hh
@@ -27,12 +30,13 @@ from make_data import particle_name
 WORKING_DIR = "."   # Not needed unless we want it hardcoded.
 
 # importent paths
-results_folder = WORKING_DIR + "/new_run"
+results_folder = "new_run"
 # data_to_be_run_path = "example_one_song_hero.json"
 make_data_script = WORKING_DIR + "/make_data.py"
 run_simulator_script = WORKING_DIR + "/run_data_threads.py"
 # s3_uri =  "geant4-sim"
 LOG_PATH = WORKING_DIR + "/run_script_Cosmic_Ray_Sim.log"
+AWS_CREDS_LOCATION = '/etc/opt/geant4/aws_creds'
 # s3_arn = "aws:s3:::geant4-sim"
 # Functions
 
@@ -73,7 +77,7 @@ def pick_point_cuboid(corner_far_z, corner_close_z, Alcover_x, Alcover_y):
     position = np.array([x, y, z])
     return position
 
-def upload_file(file_name, bucket, object_name=None):
+def upload_file(file_name, bucket, access_key, secret_key, object_name=None):
     """Upload a file to an S3 bucket
 
     :param file_name: File to upload
@@ -81,13 +85,15 @@ def upload_file(file_name, bucket, object_name=None):
     :param object_name: S3 object name. If not specified then file_name is used
     :return: True if file was uploaded, else False
     """
-
+    
     # If S3 object_name was not specified, use file_name
     if object_name is None:
         object_name = os.path.basename(file_name)
 
-    # Upload the file
-    s3_client = boto3.client('s3')
+    s3_client = boto3.client("s3", 
+                aws_access_key_id=access_key,
+                aws_secret_access_key=secret_key)
+
     try:
         response = s3_client.upload_file(file_name, bucket, object_name)
     except ClientError as e:
@@ -214,27 +220,58 @@ if __name__ == "__main__":
         with open(file_path, 'w') as outfile:
             json.dump(new_particle, outfile, indent=4)
 
-        # prepare the data with python script, for every json file
-        subprocess.run(f"python3 {make_data_script} {results_folder} {file_path} {json_number}", shell=True)
+        logging.info("Running %s", make_data_script)
+            # prepare the data with python script, for every json file
+        ret = subprocess.run([make_data_script, results_folder, file_path, str(json_number)], capture_output=True)
+        if ret.returncode != 0:
+            logging.error("Make data script failed to start")
+            logging.error(ret.stdout + ret.stderr)
+            logging.error("Exiting")
+            sys.exit(2)
+        else:
+            logging.info("Data created successfully")
 
         # closing for loop
 
+    logging.info("Running %s", run_simulator_script)
+
     # run data
-    subprocess.run(
-        f"python3 {run_simulator_script} -j {number_of_threads} -dir {results_folder} -numofscints {NUMBER_OF_SLABS} -detsize {detector_size_z}  -scintz {scint_z} -centerscint {center_z_first_scint} -run",
-        shell=True)
+    ret = subprocess.run([run_simulator_script, "-j", str(number_of_threads),  "-dir", results_folder, "-numofscints", str(NUMBER_OF_SLABS), 
+     "-detsize",  str(detector_size_z),  "-scintz", str(scint_z), "-centerscint", str(center_z_first_scint), "-run"], capture_output=True)
+
+    if ret.returncode != 0:
+        logging.error("Running %s failed", run_simulator_script)
+        logging.error(ret.stdout + ret.stderr)
+        logging.error("Exiting")
+        sys.exit(2)
+    else:
+        logging.info("%s finished successfully", run_simulator_script)
+
+    logging.info("Making CSV file")
 
     # make CSV file
-    subprocess.run(
-        f"python3 {run_simulator_script} -j {number_of_threads} -dir {results_folder} -numofscints {NUMBER_OF_SLABS} -detsize {detector_size_z}  -scintz {scint_z} -centerscint {center_z_first_scint} -parse",
-        shell=True)
+    ret = subprocess.run([run_simulator_script, "-j", str(number_of_threads), "-dir", results_folder, "-numofscints", str(NUMBER_OF_SLABS), "-detsize", str(detector_size_z), "-scintz", str(scint_z), 
+        "-centerscint",  str(center_z_first_scint),  "-parse"],  capture_output=True)
+    if ret.returncode != 0:
+        logging.error("Making CSV file failed")
+        logging.error(ret.stdout + ret.stderr)
+        logging.error("Exiting")
+        sys.exit(2)
+    else:
+        logging.info("%s finished successfully", run_simulator_script)
     # upload csv to S3
     #s3 = boto3.client('s3')
     #with open("new_run/final_results.csv","rb") as f:
         #s3.upload_fileobj(f,s3_uri)
     if aws_bucket is not False:
+        config = configparser.ConfigParser()
+        config.read(AWS_CREDS_LOCATION)
+        access_key = config['DEFAULT']['ACCESS_KEY']
+        secret_key = config['DEFAULT']['SECRET_KEY']
+
         logging.info("Uploading file to S3 bucket %s", aws_bucket)
-        upload_file("new_run/final_results.csv", aws_bucket, "final_results_" + sim_type + "_" + now.strftime("%m%d%Y%H_%M_%S"))
+        upload_file("new_run/final_results.csv", aws_bucket, access_key, secret_key, "final_results_" + sim_type + "_" + datetime.now().strftime("%m%d%Y%H_%M_%S"))
+        logging.info("Done uploading to S3")
 
 
 
