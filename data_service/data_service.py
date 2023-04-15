@@ -26,21 +26,36 @@ def init_logging():
         logging.basicConfig(stream=sys.stdout, level=logging.INFO, format='%(asctime)s %(message)s')
 
 
-def check_config_file_exists(filename):
-    return os.path.isfile(filename)
-
-def read_config_and_start_service_loop(filename):
-
-    while not check_config_file_exists(filename):
-        logging.info("No configuration file found %s, sleeping 60 seconds", filename)
-        time.sleep(60)
+def check_config_file_exists_and_valid(filename):
+    if os.path.isfile(filename) is False:
+        logging.info("No configuration file %s found.", filename)
+        return False
 
     config = configparser.ConfigParser()
     config.read(filename)
-    
+
+    if not config.has_option('DEFAULT', 'AWS_BUCKET') or not config.has_option('DEFAULT', 'SIMULATION_TYPE'):
+        logging.info("Missing parameters in secion DEFAULT.")
+        return False
+
+    else:
+        return config
+
+
+def read_config_and_start_service_loop(filename):
+
+    config = False
+
+    while config is False:
+        config = check_config_file_exists_and_valid(filename)
+        if config is False:
+            logging.info("sleeping 60 seconds")
+            time.sleep(60)
+
     aws_bucket_name = config['DEFAULT']['AWS_BUCKET']
     sim_type = config['DEFAULT']['SIMULATION_TYPE']
 
+    logging.info("Starting simulation.")
     start_simulation_and_exit(aws_bucket_name, sim_type)
 
 def start_simulation_and_exit(aws_bucket_name, sim_type):
