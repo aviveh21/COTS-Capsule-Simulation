@@ -157,11 +157,7 @@ if __name__ == "__main__":
 
     ## making data
 
-<<<<<<< HEAD
-   ### random particle and energy from the cosmic ray radiation
-=======
     ### random particle and energy from the cosmic ray radiation
->>>>>>> 8c0392c6df023e1f42138caa598430427eacbd26
     if sim_type == 'high_mem':
         population_particles = ["ion_neon","ion_magnesium","ion_silicon","ion_iron"]
         weights_particles = [0.2, 0.2,0.2, 0.4]
@@ -195,45 +191,6 @@ if __name__ == "__main__":
         if particle == "ion_lithium":
             particle = "ion"
             ion = [3, 6, 3]
-<<<<<<< HEAD
-            energy = uniform(300, 4000)
-        elif particle == "ion_carbon":
-            particle = "ion"
-            ion = [6, 12, 6]
-            energy = uniform(700, 11000)
-        elif particle == "ion_oxygen":
-            particle = "ion"
-            ion = [8, 16, 8]
-            energy = uniform(1000, 18000)
-        elif particle == "ion_neon":
-            particle = "ion"
-            ion = [10, 20, 10]
-            energy = uniform(1500, 25000)
-        elif particle == "ion_magnesium":
-            particle = "ion"
-            ion = [12, 24, 12]
-            energy = uniform(2000, 35000)
-        elif particle == "ion_silicon":
-            particle = "ion"
-            ion = [14, 28, 14]
-            energy = uniform(2500, 50000)
-        elif particle == "ion_iron":
-            particle = "ion"
-            ion = [26, 52, 26]
-            energy = uniform(7000, 150000)
-        elif particle == "proton":
-            ion = []
-            energy = uniform(50, 2000)
-        elif particle == "alpha":
-            ion = []
-            energy = uniform(100, 3000)
-        elif particle == "e-":
-            ion = []
-            energy = uniform(500, 10000)
-        elif particle == "e+":
-            ion = []
-            energy = uniform(500, 10000)
-=======
             energy_range = choices([[30,300],[300,700],[700,4000]],[0.1,0.8,0.1])[0]
             energy = uniform(energy_range[0],energy_range[1])
         elif particle == "ion_carbon":
@@ -280,7 +237,6 @@ if __name__ == "__main__":
         elif particle == "e+":
             ion = []
             energy = uniform(0.1, 1000)
->>>>>>> 8c0392c6df023e1f42138caa598430427eacbd26
         elif particle == "mu-":
             ion = []
             energy = uniform(5000, 7000)
@@ -289,11 +245,7 @@ if __name__ == "__main__":
             energy = uniform(5000, 7000)
         elif particle == "gamma":
             ion = []
-<<<<<<< HEAD
-            energy = uniform(100, 10000)
-=======
             energy = uniform(1, 10000)
->>>>>>> 8c0392c6df023e1f42138caa598430427eacbd26
 
         ### creating python dict to before making it a json
         new_particle = {
@@ -362,6 +314,5 @@ if __name__ == "__main__":
         logging.info("Uploading file to S3 bucket %s", aws_bucket)
         upload_file("new_run/final_results.csv", aws_bucket, access_key, secret_key, "final_results_" + sim_type + "_" + datetime.now().strftime("%m%d%Y%H_%M_%S"))
         logging.info("Done uploading to S3")
-
 
 
