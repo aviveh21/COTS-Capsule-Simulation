@@ -7,7 +7,7 @@
 # For the sake of calling other scripts
 from cmath import acos, asin, cos, pi, sin, sqrt
 from locale import normalize
-from random import randint, random, randrange, choices, uniform
+from random import randint, random, randrange, choices, uniform,choice
 import subprocess
 # for writing json files
 import json
@@ -157,7 +157,11 @@ if __name__ == "__main__":
 
     ## making data
 
+<<<<<<< HEAD
    ### random particle and energy from the cosmic ray radiation
+=======
+    ### random particle and energy from the cosmic ray radiation
+>>>>>>> 8c0392c6df023e1f42138caa598430427eacbd26
     if sim_type == 'high_mem':
         population_particles = ["ion_neon","ion_magnesium","ion_silicon","ion_iron"]
         weights_particles = [0.2, 0.2,0.2, 0.4]
@@ -191,6 +195,7 @@ if __name__ == "__main__":
         if particle == "ion_lithium":
             particle = "ion"
             ion = [3, 6, 3]
+<<<<<<< HEAD
             energy = uniform(300, 4000)
         elif particle == "ion_carbon":
             particle = "ion"
@@ -228,6 +233,54 @@ if __name__ == "__main__":
         elif particle == "e+":
             ion = []
             energy = uniform(500, 10000)
+=======
+            energy_range = choices([[30,300],[300,700],[700,4000]],[0.1,0.8,0.1])[0]
+            energy = uniform(energy_range[0],energy_range[1])
+        elif particle == "ion_carbon":
+            particle = "ion"
+            ion = [6, 12, 6]
+            energy_range = choices([[70,700],[700,2000],[2000,11000]],[0.1,0.8,0.1])[0]
+            energy = uniform(energy_range[0],energy_range[1])
+        elif particle == "ion_oxygen":
+            particle = "ion"
+            ion = [8, 16, 8]
+            energy_range = choices([[100,1000],[1000,3000],[3000,18000]],[0.1,0.8,0.1])[0]
+            energy = uniform(energy_range[0],energy_range[1])
+        elif particle == "ion_neon":
+            particle = "ion"
+            ion = [10, 20, 10]
+            energy_range = choices([[150,1500],[1500,4500],[4500,25000]],[0.1,0.8,0.1])[0]
+            energy = uniform(energy_range[0],energy_range[1])
+        elif particle == "ion_magnesium":
+            particle = "ion"
+            ion = [12, 24, 12]
+            energy_range = choices([[200,2000],[2000,6000],[6000,35000]],[0.1,0.8,0.1])[0]
+            energy = uniform(energy_range[0],energy_range[1])
+        elif particle == "ion_silicon":
+            particle = "ion"
+            ion = [14, 28, 14]
+            energy_range = choices([[250,2500],[2500,8000],[8000,50000]],[0.1,0.8,0.1])[0]
+            energy = uniform(energy_range[0],energy_range[1])
+        elif particle == "ion_iron":
+            particle = "ion"
+            ion = [26, 52, 26]
+            energy_range = choices([[700,7000],[7000,2000],[700,150000]],[0.1,0.8,0.1])[0]
+            energy = uniform(energy_range[0],energy_range[1])
+        elif particle == "proton":
+            ion = []
+            energy_range = choices([[4,40],[40,400],[400,2000]],[0.1,0.8,0.1])[0]
+            energy = uniform(energy_range[0],energy_range[1])
+        elif particle == "alpha":
+            ion = []
+            energy_range = choices([[15,150],[150,800],[800,3000]],[0.1,0.8,0.1])[0]
+            energy = uniform(energy_range[0],energy_range[1])
+        elif particle == "e-":
+            ion = []
+            energy = uniform(0.1, 1000)
+        elif particle == "e+":
+            ion = []
+            energy = uniform(0.1, 1000)
+>>>>>>> 8c0392c6df023e1f42138caa598430427eacbd26
         elif particle == "mu-":
             ion = []
             energy = uniform(5000, 7000)
@@ -236,7 +289,11 @@ if __name__ == "__main__":
             energy = uniform(5000, 7000)
         elif particle == "gamma":
             ion = []
+<<<<<<< HEAD
             energy = uniform(100, 10000)
+=======
+            energy = uniform(1, 10000)
+>>>>>>> 8c0392c6df023e1f42138caa598430427eacbd26
 
         ### creating python dict to before making it a json
         new_particle = {
