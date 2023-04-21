@@ -113,9 +113,11 @@ if __name__ == "__main__":
 
     sim_type = 'default'
     aws_bucket = False
+    total_runs = False
+
 
     try:
-        opts, args = getopt.getopt(sys.argv[1:],"",['aws-bucket=', 'sim-type='])
+        opts, args = getopt.getopt(sys.argv[1:],"",['aws-bucket=', 'sim-type=', 'total-runs='])
     except getopt.GetoptError as err:
         logging.info("%s bad parameters %s", sys.argv[0], err)
         sys.exit(2)
@@ -123,8 +125,13 @@ if __name__ == "__main__":
     for opt, arg in opts:
         if opt == '--aws-bucket':
             aws_bucket = arg
+            logging.info("using aws bucket %s", aws_bucket)
         elif opt == '--sim-type':
             sim_type = arg
+            logging.info("simulation type %s", sim_type)
+        elif opt == '--total-runs':
+            total_runs = int(arg)
+            logging.info("total runs %d", total_runs)
         else:
             logging.error("%s bad parameter %s", sys.argv[0], opt)
             sys.exit(2)
@@ -161,15 +168,21 @@ if __name__ == "__main__":
     if sim_type == 'high_mem':
         population_particles = ["ion_neon","ion_magnesium","ion_silicon","ion_iron"]
         weights_particles = [0.2, 0.2,0.2, 0.4]
-        total_runs = 1000
+        if total_runs is False:
+            total_runs = 1000
         
     else:
-        population_particles = ["proton", "alpha","lituium","carbon","oxygen", "e-", "e+", "mu-", "mu+","gamma"]
+        population_particles = ["proton", "alpha", "ion_lithium", "ion_carbon", "ion_oxygen", "e-", "e+", "mu-", "mu+","gamma"]
         weights_particles = [0.3, 0.3, 0.1, 0.1, 0.1, 0.02,0.02,0.02,0.02,0.02]
-        total_runs = 100000
+        if total_runs is False:
+            logging.info("total_runs not found, using default value")
+            total_runs = 100000
+        else:
+            logging.info("Total runs %d", total_runs)
     ### for loop to randomize all the particles 
 
     for x in range(total_runs):
+        logging.info("Startung run number %d", x + 1)
         json_number = x + 1
         ### random starting position
         position = pick_point_on_sphere(radius, center)
@@ -246,6 +259,11 @@ if __name__ == "__main__":
         elif particle == "gamma":
             ion = []
             energy = uniform(1, 10000)
+        else:
+            logging.error("ERROR: Particle type %s not found, check particles list", particle)
+
+        logging.info("Startung run number %d, particle %s, energy %d", x + 1, particle, energy)
+
 
         ### creating python dict to before making it a json
         new_particle = {

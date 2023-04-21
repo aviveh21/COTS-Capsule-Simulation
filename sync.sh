@@ -17,7 +17,7 @@ if [ $# -eq 2 ]; then
 fi   
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
-SSH_KEY="$SCRIPT_DIR/ssh_keys/alex_key.pem"
+SSH_KEY="$SCRIPT_DIR/../keys/alex_key.pem"
 
 RSYNC_OPTS="-avz --no-perms --no-owner --progress --no-group $DRY_RUN"
 

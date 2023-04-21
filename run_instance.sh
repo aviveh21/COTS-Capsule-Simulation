@@ -4,8 +4,9 @@
 
 today=$(date +%Y-%m-%d.%H:%M:%S)
 instance_name="geant-sim $today"
+AMI=ami-059316d8f633bf3fa
 
-aws ec2 run-instances --image-id ami-0f225704f866d6cd6 --count 1 --instance-type t2.micro --key-name alex_key \
+aws ec2 run-instances --image-id "$AMI" --count 1 --instance-type t2.micro --key-name alex_key \
 --security-group-ids sg-0b3decb39d029facf --user-data file://init_geant_config_script.txt \
 --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=$instance_name}]"
 

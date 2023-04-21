@@ -45,6 +45,7 @@ def check_config_file_exists_and_valid(filename):
 def read_config_and_start_service_loop(filename):
 
     config = False
+    total_runs = False
 
     while config is False:
         config = check_config_file_exists_and_valid(filename)
@@ -55,12 +56,20 @@ def read_config_and_start_service_loop(filename):
     aws_bucket_name = config['DEFAULT']['AWS_BUCKET']
     sim_type = config['DEFAULT']['SIMULATION_TYPE']
 
-    logging.info("Starting simulation.")
-    start_simulation_and_exit(aws_bucket_name, sim_type)
+    if config.has_option('DEFAULT', 'TOTAL_RUNS'):
+        total_runs = config['DEFAULT']['TOTAL_RUNS']
 
-def start_simulation_and_exit(aws_bucket_name, sim_type):
+    logging.info("Starting simulation.")
+    start_simulation_and_exit(aws_bucket_name, sim_type, total_runs)
+
+def start_simulation_and_exit(aws_bucket_name, sim_type, total_runs):
 
     args = [SIMULATION_PATH, "--aws-bucket", aws_bucket_name, "--sim-type" ,sim_type]
+
+    if total_runs is not False:
+        args += ["--total-runs", total_runs]
+
+    logging.info("Starting simulation with arguments: " + str(args))
 
     ret = subprocess.run(args, capture_output=True)
 
