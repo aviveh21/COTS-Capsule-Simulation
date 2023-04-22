@@ -170,19 +170,22 @@ if __name__ == "__main__":
         weights_particles = [0.2, 0.2,0.2, 0.4]
         if total_runs is False:
             total_runs = 1000
+            logging.info("total_runs not found, using default value %d",total_runs)
+        else:
+            logging.info("Total runs %d", total_runs)
         
     else:
         population_particles = ["proton", "alpha", "ion_lithium", "ion_carbon", "ion_oxygen", "e-", "e+", "mu-", "mu+","gamma"]
         weights_particles = [0.3, 0.3, 0.1, 0.1, 0.1, 0.02,0.02,0.02,0.02,0.02]
         if total_runs is False:
-            logging.info("total_runs not found, using default value")
             total_runs = 100000
+            logging.info("total_runs not found, using default value %d",total_runs)
         else:
             logging.info("Total runs %d", total_runs)
-    ### for loop to randomize all the particles 
 
+    ### for loop to randomize all the particles 
     for x in range(total_runs):
-        logging.info("Startung run number %d", x + 1)
+        logging.info("Starting run number %d", x + 1)
         json_number = x + 1
         ### random starting position
         position = pick_point_on_sphere(radius, center)
@@ -262,7 +265,7 @@ if __name__ == "__main__":
         else:
             logging.error("ERROR: Particle type %s not found, check particles list", particle)
 
-        logging.info("Startung run number %d, particle %s, energy %d", x + 1, particle, energy)
+        logging.info("Starting run number %d, particle %s, energy %d", x + 1, particle, energy)
 
 
         ### creating python dict to before making it a json
