@@ -30,7 +30,7 @@ import configparser
 WORKING_DIR = "."   # Not needed unless we want it hardcoded.
 
 # importent paths
-results_folder = "new_run"
+results_folder = "run_data"
 # data_to_be_run_path = "example_one_song_hero.json"
 make_data_script = WORKING_DIR + "/make_data.py"
 run_simulator_script = WORKING_DIR + "/run_data_threads.py"
@@ -135,6 +135,9 @@ if __name__ == "__main__":
         else:
             logging.error("%s bad parameter %s", sys.argv[0], opt)
             sys.exit(2)
+
+    if not os.path.exists(results_folder):
+        os.makedirs(results_folder)
 
     number_of_threads = 4
 
