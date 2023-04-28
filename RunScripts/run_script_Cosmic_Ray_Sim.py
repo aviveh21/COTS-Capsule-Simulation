@@ -336,7 +336,7 @@ if __name__ == "__main__":
         secret_key = config['DEFAULT']['SECRET_KEY']
 
         logging.info("Uploading file to S3 bucket %s", aws_bucket)
-        upload_file("new_run/final_results.csv", aws_bucket, access_key, secret_key, "final_results_" + sim_type + "_" + datetime.now().strftime("%m%d%Y%H_%M_%S"))
+        upload_file("new_run/final_results.csv", aws_bucket, access_key, secret_key, "final_results_" + sim_type + "_" + datetime.now().strftime("%m%d%Y%H_%M_%S") + ".csv")
         logging.info("Done uploading to S3")
 
 
