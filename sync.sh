@@ -22,7 +22,7 @@ SSH_KEY="$SCRIPT_DIR/../keys/alex_key.pem"
 RSYNC_OPTS="-avz --no-perms --no-owner --progress --no-group $DRY_RUN"
 
 echo "Syncing local directories (no /etc)"
-rsync $RSYNC_OPTS --exclude-from="$SCRIPT_DIR"/exclude_sync -e "ssh -i $SSH_KEY" $SCRIPT_DIR/ ubuntu@$ip:~/COTS-Capsule-Simulation/
+rsync $RSYNC_OPTS --exclude-from="$SCRIPT_DIR"/exclude_sync -e "ssh -i $SSH_KEY" $SCRIPT_DIR/ ubuntu@$ip:~/COTS-Capsule-Simulation/ --delete-after
 
 echo "Syncing /etc" 
 rsync $RSYNC_OPTS -e "ssh -i $SSH_KEY" --rsync-path="sudo rsync" $SCRIPT_DIR/etc/ ubuntu@$ip:/etc/

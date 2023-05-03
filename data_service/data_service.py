@@ -7,6 +7,7 @@ import sys
 import subprocess
 import os.path
 import configparser
+import os
 
 
 
@@ -77,7 +78,9 @@ def start_simulation_and_exit(aws_bucket_name, sim_type, total_runs):
         logging.error("Simulation failed to start")
         logging.error(ret.stdout + ret.stderr)
     else:
-        logging.info("Simulated started successfully")
+        logging.info("Simulated finished successfully")
+        logging.info("Shutting down system")
+        os.system("sudo shutdown -h now")
 
 def main():
     init_logging()
