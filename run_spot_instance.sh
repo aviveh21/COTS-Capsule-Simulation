@@ -4,10 +4,11 @@
 
 today=$(date +%Y-%m-%d.%H:%M:%S)
 INSTANCE_NAME="geant-sim $today"
-AMI_ID=ami-0857730a699c12962
-INSTANCE_TYPE=c6i.xlarge
+AMI_ID=ami-019bc6ee4957f9786
+# INSTANCE_TYPE=c6i.xlarge
 COUNT=15
-
+# For high mem simulations
+INSTANCE_TYPE=c6i.4xlarge
 
 USER_DATA=`base64 -i "init_geant_config_script.txt"` # Replace with the path to your user-data script
 
@@ -24,3 +25,4 @@ aws ec2 request-spot-instances \
     }" \
 
 
+#     --instance-interruption-behavior stop 

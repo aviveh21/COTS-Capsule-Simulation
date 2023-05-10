@@ -23,8 +23,8 @@ RUN_BEAM_ON = 2000
 COUNT_TIME = True
 
 
-def init_logging():
-    logging.basicConfig(filename="run_data_threads.log", level=logging.INFO, format='%(asctime)s, %(message)s',datefmt='%Y-%m-%d, %H:%M:%S')
+def init_logging(mode):
+    logging.basicConfig(filename=mode + "_data_threads.log", level=logging.INFO, format='%(asctime)s, %(message)s',datefmt='%Y-%m-%d, %H:%M:%S')
 
 NUMBER_OF_SLABS = 5
 start = time.time()
@@ -216,7 +216,6 @@ def worker_func(run_dir):
         subprocess.run([geant_exe_full_path, run_dir + "/" + INPUT_FILE_NAME], stdout=out_fd, cwd=run_dir)
 
 if __name__ == "__main__":
-    init_logging()
     parser = argparse.ArgumentParser()
     parser.add_argument("-run", action='store_true')
     parser.add_argument("-parse", action='store_true')
@@ -228,6 +227,11 @@ if __name__ == "__main__":
     parser.add_argument("-scintz", default= 0.67 , type=float)
     parser.add_argument("-centerscint", default= 0 , type=float)
     args = parser.parse_args()
+    if args.run:
+        init_logging("run")
+    if args.parse:
+        init_logging("parse")
+
 
     save_path = args.dir
     if os.path.exists(save_path):

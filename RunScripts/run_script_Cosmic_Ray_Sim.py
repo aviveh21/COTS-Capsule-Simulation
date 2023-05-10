@@ -36,7 +36,7 @@ make_data_script = WORKING_DIR + "/make_data.py"
 run_simulator_script = WORKING_DIR + "/run_data_threads.py"
 # s3_uri =  "geant4-sim"
 LOG_PATH = WORKING_DIR + "/run_script_Cosmic_Ray_Sim.log"
-AWS_CREDS_LOCATION = '/etc/opt/geant4/aws_creds'
+# AWS_CREDS_LOCATION = '/etc/opt/geant4/aws_creds'
 # s3_arn = "aws:s3:::geant4-sim"
 # Functions
 
@@ -77,29 +77,6 @@ def pick_point_cuboid(corner_far_z, corner_close_z, Alcover_x, Alcover_y):
     position = np.array([x, y, z])
     return position
 
-def upload_file(file_name, bucket, access_key, secret_key, object_name=None):
-    """Upload a file to an S3 bucket
-
-    :param file_name: File to upload
-    :param bucket: Bucket to upload to
-    :param object_name: S3 object name. If not specified then file_name is used
-    :return: True if file was uploaded, else False
-    """
-    
-    # If S3 object_name was not specified, use file_name
-    if object_name is None:
-        object_name = os.path.basename(file_name)
-
-    s3_client = boto3.client("s3", 
-                aws_access_key_id=access_key,
-                aws_secret_access_key=secret_key)
-
-    try:
-        response = s3_client.upload_file(file_name, bucket, object_name)
-    except ClientError as e:
-        logging.error(e)
-        return False
-    return True
 
 # data randomizer
 
@@ -313,7 +290,8 @@ if __name__ == "__main__":
     else:
         logging.info("%s finished successfully", run_simulator_script)
 
-    logging.info("Making CSV file")
+###### Moved to data service
+'''    logging.info("Making CSV file")
 
     # make CSV file
     ret = subprocess.run([run_simulator_script, "-j", str(number_of_threads), "-dir", results_folder, "-numofscints", str(NUMBER_OF_SLABS), "-detsize", str(detector_size_z), "-scintz", str(scint_z), 
@@ -338,5 +316,5 @@ if __name__ == "__main__":
         logging.info("Uploading file to S3 bucket %s", aws_bucket)
         upload_file(results_folder + "/final_results.csv", aws_bucket, access_key, secret_key, "final_results_" + sim_type + "_" + datetime.now().strftime("%m%d%Y%H_%M_%S") + ".csv")
         logging.info("Done uploading to S3")
-
+'''
 

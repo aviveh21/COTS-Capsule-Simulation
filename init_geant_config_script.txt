@@ -4,5 +4,6 @@ mkdir -p /home/ubuntu/COTS-Capsule-Simulation/data_service
 tee -a /home/ubuntu/COTS-Capsule-Simulation/data_service/config.ini <<EOF
 [DEFAULT] 
 AWS_BUCKET=geant4-sim
-SIMULATION_TYPE=default
+SIMULATION_TYPE=high_mem
+TOTAL_RUNS=100
 EOF
