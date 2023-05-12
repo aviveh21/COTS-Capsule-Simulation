@@ -22,6 +22,7 @@ import getopt
 from make_data import particle_name
 from datetime import datetime
 import configparser
+import psutil
 
 
 # import Full_Detector/Sim/src/SimDetectorConstruction.cc
@@ -116,7 +117,8 @@ if __name__ == "__main__":
     if not os.path.exists(results_folder):
         os.makedirs(results_folder)
 
-    number_of_threads = 4
+    number_of_threads = psutil.cpu_count(logical=True)
+    logging.info("Using %d logical cpus", number_of_threads)
 
     NUMBER_OF_SLABS = 5
     detector_size_z = 1.214  # cm # Size in Z axis of the whole detector, which some of them create the telescope/Kasefet

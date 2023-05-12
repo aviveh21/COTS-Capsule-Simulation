@@ -5,5 +5,5 @@ tee -a /home/ubuntu/COTS-Capsule-Simulation/data_service/config.ini <<EOF
 [DEFAULT] 
 AWS_BUCKET=geant4-sim
 SIMULATION_TYPE=high_mem
-TOTAL_RUNS=100
+TOTAL_RUNS=3600
 EOF
