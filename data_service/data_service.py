@@ -163,9 +163,8 @@ def start_simulation_and_log_loop(aws_bucket_name, sim_type, total_runs):
     logging.info("Starting simulation with arguments: " + str(args))
     start_simulation_time = datetime.now().strftime("%m%d%Y%H_%M_%S")
     process = subprocess.Popen(args)
-    # Allow a few seconds to fail if something went wrong
 
-    time.sleep(5) 
+    time.sleep(60) 
 
     while process.poll() is None:
         logging.info("Simulation is up and running. Saving partial results.")

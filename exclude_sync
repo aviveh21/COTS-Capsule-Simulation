@@ -4,6 +4,7 @@ etc
 exclude_sync
 run_instance.sh
 run_spot_instance.sh
+run_spot_instances.py
 init_geant_config_script.txt
 sync.sh
 Full_Detector

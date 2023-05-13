@@ -1,0 +1,75 @@
+#!/opt/homebrew/bin/python3
+
+
+import argparse
+import base64
+import boto3
+import time
+
+# Parse command-line arguments
+parser = argparse.ArgumentParser()
+parser.add_argument('--key-name', required=True, help='Name of the EC2 key pair to use')
+parser.add_argument('--instance-count', type=int, required=True, help='Number of instances to launch')
+parser.add_argument('--sim-type', required=True, help='Choose a simulation type (default/high_mem)')
+parser.add_argument('--runs', required=True, type=int, help='Number of simulation runs')
+
+
+args = parser.parse_args()
+
+# Define the parameters for the spot instances
+# spot_price = '0.1'
+instance_type = 'c6i.4xlarge'
+image_id = 'ami-04399d968934fdde3'
+key_name = args.key_name
+instance_count = args.instance_count
+sim_type = args.sim_type
+runs = args.runs
+
+
+user_data = f'''#!/bin/bash
+
+tee -a /home/ubuntu/COTS-Capsule-Simulation/data_service/config.ini <<EOF
+[DEFAULT]
+AWS_BUCKET=geant4-sim
+SIMULATION_TYPE={sim_type}
+TOTAL_RUNS={runs}
+EOF'''
+
+user_data_b64 = base64.b64encode(user_data.encode('utf-8')).decode('utf-8')
+# Define the tags to apply to the instances
+tags = [
+    {'Key': 'Name', 'Value': sim_type},
+]
+
+# Launch the spot instances
+ec2 = boto3.client('ec2')
+response = ec2.request_spot_instances(
+  #  SpotPrice=spot_price,
+    InstanceCount=instance_count,
+    LaunchSpecification={
+        'ImageId': image_id,
+        'InstanceType': instance_type,
+        'KeyName': key_name,
+        'UserData': user_data_b64,
+        'SecurityGroupIds': [ 'sg-0b3decb39d029facf' ]
+    }
+)
+
+time.sleep(1)
+
+# Get the spot request IDs
+spot_request_ids = [r['SpotInstanceRequestId'] for r in response['SpotInstanceRequests']]
+
+# Wait for the instances to start running
+running_instance_ids = []
+while len(running_instance_ids) < len(spot_request_ids):
+    time.sleep(1)
+    instances = ec2.describe_instances(Filters=[{'Name': 'spot-instance-request-id', 'Values': spot_request_ids}])
+    for reservation in instances['Reservations']:
+        for instance in reservation['Instances']:
+            if instance['State']['Name'] == 'running':
+                if instance['InstanceId'] not in running_instance_ids:
+                    running_instance_ids.append(instance['InstanceId'])
+
+# Tag the running instances
+ec2.create_tags(Resources=running_instance_ids, Tags=tags)
