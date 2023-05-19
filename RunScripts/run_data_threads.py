@@ -12,7 +12,9 @@ import argparse
 import queue
 import logging
 from typing import Pattern
-from thread_worker import Workers
+import multiprocessing
+import subprocess
+
 
 MOTHER_FOLDER = '/runs'
 INPUT_FILE_NAME = 'input.txt'
@@ -214,6 +216,8 @@ def worker_func(run_dir):
         geant_exe_full_path = os.path.abspath(GEANT_EXE_LOCATION)  
         # Must use absolute path of geant, since we change the working directory
         subprocess.run([geant_exe_full_path, run_dir + "/" + INPUT_FILE_NAME], stdout=out_fd, cwd=run_dir)
+        logging.info("Finished simulation %s", run_dir)   
+ 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -247,14 +251,14 @@ if __name__ == "__main__":
         exit(1)
 
     if args.run:
-        queue = queue.Queue()
+        dir_q = queue.Queue() 
     start_time = time.time() # timestamp before run
     simulation_data = dict()
     for run_dir, _, filename in os.walk(os.getcwd()):
         if INPUT_FILE_NAME in filename:
  #           os.chdir(run_dir)
             if args.run:
-                queue.put(run_dir)
+                dir_q.put(run_dir)
                 # with open("run_stdout.txt", 'w') as out_fd:
                 #     subprocess.run([GEANT_EXE_LOCATION, INPUT_FILE_NAME], stdout=out_fd)
             elif args.parse:
@@ -262,13 +266,17 @@ if __name__ == "__main__":
                 # 09/07/22 Aviv changed to support changes in number of slabs
                 # and to fix the bug of the order of the positions of hitting the scints
                 #simulation_data[run_number] = get_run_data(run_dir)
-                simulation_data[run_number] = get_run_data(run_dir,args.numofscints, args.detsize , args.scintz,args.centerscint )
+                simulation_data[run_number] = get_run_data(run_dir,args.numofscints, args.detsize , args.scintz, args.centerscint)
             # print('Debug: extracted the following data: \n {}'.format(simulation_data[run_number]))
     print(" Got Here horray!")
     if args.run:
-        workers = Workers(queue, worker_func, args.j)
-        workers.start_workers()
-        workers.wait_for_all_workers()
+        pool = multiprocessing.Pool(processes=args.j)
+        while not dir_q.empty():
+            name = dir_q.get()
+            pool.apply_async(worker_func, args=(name,))
+
+        pool.close()
+        pool.join()
         end_time = time.time() # timestamp after run
         print(end_time - start_time, " seconds")
         exit(0)
@@ -306,8 +314,8 @@ if __name__ == "__main__":
 
             number_of_runs = len(output_lines) - 1
             end_time = time.time() # timestamp after run
-            output_lines.append(["Total time for simulation: ", end_time - start_time, " (seconds)"])
-            output_lines.append(["Total runs: ", number_of_runs])
+            output_lines.append(["Total time for simulation: ", str(end_time - start_time), " (seconds)"])
+            output_lines.append(["Total runs: ", str(number_of_runs)])
             #end = time.time()
             #total_time= end -start
             #output_lines.append(["Current run took: ", total_time])
