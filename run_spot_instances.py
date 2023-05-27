@@ -12,6 +12,8 @@ parser.add_argument('--key-name', required=True, help='Name of the EC2 key pair 
 parser.add_argument('--instance-count', type=int, required=True, help='Number of instances to launch')
 parser.add_argument('--sim-type', required=True, help='Choose a simulation type (default/high_mem)')
 parser.add_argument('--runs', required=True, type=int, help='Number of simulation runs')
+parser.add_argument('--debug', action='store_true', help='Enable debug mode')
+
 
 
 args = parser.parse_args()
@@ -42,8 +44,29 @@ tags = [
     {'Key': 'Name', 'Value': sim_type},
 ]
 
-# Launch the spot instances
 ec2 = boto3.client('ec2')
+
+
+if args.debug:
+    print("Running regular instance")
+    response = ec2.run_instances(
+            ImageId=image_id,  # Replace with your desired AMI ID
+            InstanceType=instance_type,  # Replace with your desired instance type
+            MinCount=instance_count,
+            MaxCount=instance_count,
+            KeyName=key_name,  # Replace with your key pair name
+            UserData=user_data_b64,
+            TagSpecifications=[
+                {
+                    'ResourceType': 'instance',
+                    'Tags': tags
+                },
+            ]
+        )
+    exit(0)
+
+
+# Launch the spot instances
 response = ec2.request_spot_instances(
   #  SpotPrice=spot_price,
     InstanceCount=instance_count,
