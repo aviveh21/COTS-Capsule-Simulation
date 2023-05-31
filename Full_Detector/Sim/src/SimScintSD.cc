@@ -97,6 +97,7 @@ G4bool SimScintSD::ProcessHits(G4Step* aStep,G4TouchableHistory* ){
       G4cout << "Particle Volume: " << aStep->GetTrack()->GetVolume()->GetLogicalVolume()->GetName() << G4endl;
       ss << "Exit Location: " << aStep->GetTrack()->GetPosition() << G4endl;
       G4cout << "Exit Location: " << aStep->GetTrack()->GetPosition() << G4endl;
+      ss << "Total energy deposited: " << fTotalEnergy / CLHEP::keV << G4endl;
       G4cout << "Total energy deposited: " << fTotalEnergy / CLHEP::keV << G4endl;
     }
   }
