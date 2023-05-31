@@ -55,7 +55,7 @@ if args.debug:
             MinCount=instance_count,
             MaxCount=instance_count,
             KeyName=key_name,  # Replace with your key pair name
-            UserData=user_data_b64,
+            UserData=user_data,
             SecurityGroupIds=security_group_ids,
             TagSpecifications=[
                 {
