@@ -21,13 +21,18 @@ args = parser.parse_args()
 # Define the parameters for the spot instances
 # spot_price = '0.1'
 instance_type = 't2.2xlarge' #'c6i.4xlarge'
-image_id = 'ami-09b63903e5b71b352' 
+image_id = 'ami-07e1c5566682ea22b' 
 # image_id = 'ami-04399d968934fdde3'
 key_name = args.key_name
 instance_count = args.instance_count
 sim_type = args.sim_type
 runs = args.runs
 security_group_ids = [ 'sg-0b3decb39d029facf' ]
+
+debug = False
+
+if args.debug:
+    debug = args.debug
 
 user_data = f'''#!/bin/bash
 
@@ -36,6 +41,7 @@ tee -a /home/ubuntu/COTS-Capsule-Simulation/data_service/config.ini <<EOF
 AWS_BUCKET=geant4-sim
 SIMULATION_TYPE={sim_type}
 TOTAL_RUNS={runs}
+DEBUG={debug}
 EOF'''
 
 user_data_b64 = base64.b64encode(user_data.encode('utf-8')).decode('utf-8')

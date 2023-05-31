@@ -127,6 +127,7 @@ def read_config_and_start_service_loop(filename):
 
     config = False
     total_runs = False
+    debug = False
 
     while config is False:
         config = check_config_file_exists_and_valid(filename)
@@ -140,10 +141,16 @@ def read_config_and_start_service_loop(filename):
     if config.has_option('DEFAULT', 'TOTAL_RUNS'):
         total_runs = config['DEFAULT']['TOTAL_RUNS']
 
-    logging.info("Starting simulation.")
-    start_simulation_and_log_loop(aws_bucket_name, sim_type, total_runs)
+    if config.has_option('DEFAULT', 'DEBUG'):
+        debug = config.getboolean('DEFAULT', 'DEBUG')
+        if debug:
+            logging.info("Debug mode set to true")
 
-def start_simulation_and_log_loop(aws_bucket_name, sim_type, total_runs):
+
+    logging.info("Starting simulation.")
+    start_simulation_and_log_loop(aws_bucket_name, sim_type, total_runs, debug)
+
+def start_simulation_and_log_loop(aws_bucket_name, sim_type, total_runs, debug):
 
     config = configparser.ConfigParser()
     config.read(AWS_CREDS_LOCATION)
@@ -190,8 +197,11 @@ def start_simulation_and_log_loop(aws_bucket_name, sim_type, total_runs):
             logging.info("Deleting partial results file " + partial_results_file_name)
             delete_file(partial_results_file_name, aws_bucket_name, access_key, secret_key)
 
-        logging.info("Shutting down system")
-        os.system("sudo shutdown -h now")
+        if debug is True:
+            logging.info("Debug mode, not shutting down")
+        else:
+            logging.info("Shutting down system")
+            os.system("sudo shutdown -h now")
 
 
 def main():
