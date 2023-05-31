@@ -27,7 +27,7 @@ key_name = args.key_name
 instance_count = args.instance_count
 sim_type = args.sim_type
 runs = args.runs
-
+security_group_ids = [ 'sg-0b3decb39d029facf' ]
 
 user_data = f'''#!/bin/bash
 
@@ -56,6 +56,7 @@ if args.debug:
             MaxCount=instance_count,
             KeyName=key_name,  # Replace with your key pair name
             UserData=user_data_b64,
+            SecurityGroupIds=security_group_ids,
             TagSpecifications=[
                 {
                     'ResourceType': 'instance',
@@ -75,7 +76,7 @@ response = ec2.request_spot_instances(
         'InstanceType': instance_type,
         'KeyName': key_name,
         'UserData': user_data_b64,
-        'SecurityGroupIds': [ 'sg-0b3decb39d029facf' ]
+        'SecurityGroupIds': security_group_ids
     }
 )
 
