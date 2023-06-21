@@ -80,7 +80,8 @@ def get_locations(content, i, res, detector_size, scintilator_size , scint_1_cen
                     exit_ordered[j] = content[i][15:]
                     #21/01/23 Aviv included total energy deposition
                     if "Total energy deposited" in content[i+1]:
-                        x = re.search("[0-9'.']+", content[i+1])
+                        x = re.search("[0-9'.']+['e']?['+']?(?:[0-9]+)",content[i+1])
+                        # x = re.search("[0-9'.']+", content[i+1])
                         total_energy[j] = x.group(0) if x is not None else ''
             #21/01/23 Aviv changed for the exit_location
             NUMBER_OF_SLABS -= 1
