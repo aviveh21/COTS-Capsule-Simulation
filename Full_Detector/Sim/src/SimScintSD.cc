@@ -90,6 +90,8 @@ G4bool SimScintSD::ProcessHits(G4Step* aStep,G4TouchableHistory* ){
 
     fTotalEnergy += edep;
     G4cout << "Current step energy: " << edep/CLHEP::keV << G4endl;
+    ss << "Current Location: " << aStep->GetTrack()->GetPosition() << G4endl;
+    G4cout << "Current Location: " << aStep->GetTrack()->GetPosition() << G4endl;
 
     if (aStep->IsLastStepInVolume())
     {
