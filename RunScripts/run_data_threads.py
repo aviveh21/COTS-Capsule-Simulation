@@ -70,6 +70,8 @@ def get_locations(content, i, res, detector_size, scintilator_size , scint_1_cen
             #res.append(content[i][16:])
             #21/01/23 Aviv changed for the exit_location
             # NUMBER_OF_SLABS -= 1
+        elif "Current Location" in content[i] and "Number of" in content[i+1]:
+            stop_location = content[i][18:]
         elif "Exit Location" in content[i]:
             if NUMBER_OF_SLABS == 0:
                 continue
@@ -117,14 +119,27 @@ def get_locations(content, i, res, detector_size, scintilator_size , scint_1_cen
             res.append('')
             res.append('')
         else:
-            xdim_enter = float(re.search('[(](.*?)[,]' , exit_ordered[j]).group(1))
-            res.append(xdim_enter)
+            xdim_exit = float(re.search('[(](.*?)[,]' , exit_ordered[j]).group(1))
+            res.append(xdim_exit)
 
-            ydim_enter = float(re.search('[,](.*?)[,]' , exit_ordered[j]).group(1))
-            res.append(ydim_enter)
+            ydim_exit = float(re.search('[,](.*?)[,]' , exit_ordered[j]).group(1))
+            res.append(ydim_exit)
 
-            zdim_enter = float(re.search('[)](.*?)[,]' , exit_ordered[j][::-1]).group(1)[::-1])
-            res.append(zdim_enter)
+            zdim_exit = float(re.search('[)](.*?)[,]' , exit_ordered[j][::-1]).group(1)[::-1])
+            res.append(zdim_exit)
+    if stop_location:
+        xdim_stop = float(re.search('[(](.*?)[,]' , stop_location).group(1))
+        res.append(xdim_stop)
+
+        ydim_stop = float(re.search('[,](.*?)[,]' , stop_location).group(1))
+        res.append(ydim_stop)
+
+        zdim_stop = float(re.search('[)](.*?)[,]' , stop_location[::-1]).group(1)[::-1])
+        res.append(zdim_stop)
+    else:
+        res.append('')
+        res.append('')
+        res.append('')
     #21/01/23 Aviv included total energy deposition
     for j in range(const_slabs):
         if total_energy[j] == '':
@@ -294,6 +309,7 @@ if __name__ == "__main__":
             #row.extend(['Silicon_2 enter location', 'Silicon_1 enter location'])
             row.extend(['Scint_1 enter location[X]', 'Scint_1 enter location[Y]', 'Scint_1 enter location[Z]', 'Scint_2 enter location[X]', 'Scint_2 enter location[Y]', 'Scint_2 enter location[Z]', 'Scint_3 enter location[X]', 'Scint_3 enter location[Y]', 'Scint_3 enter location[Z]', 'Scint_4 enter location[X]', 'Scint_4 enter location[Y]', 'Scint_4 enter location[Z]', 'Scint_5 enter location[X]', 'Scint_5 enter location[Y]', 'Scint_5 enter location[Z]'])
             row.extend(['Scint_1 exit location[X]', 'Scint_1 exit location[Y]', 'Scint_1 exit location[Z]', 'Scint_2 exit location[X]', 'Scint_2 exit location[Y]', 'Scint_2 exit location[Z]', 'Scint_3 exit location[X]', 'Scint_3 exit location[Y]', 'Scint_3 exit location[Z]', 'Scint_4 exit location[X]', 'Scint_4 exit location[Y]', 'Scint_4 exit location[Z]', 'Scint_5 exit location[X]', 'Scint_5 exit location[Y]', 'Scint_5 exit location[Z]'])
+            row.extend(['Stopping Location [X] (mm)', 'Stopping Location [Y] (mm)', 'Stopping Location [Z] (mm)'])
             row.extend(['Total energy in this scint_1', 'Total energy in this scint_2','Total energy in this scint_3', 'Total energy in this scint_4','Total energy in this scint_5'])
             row.extend(['Number of photons created'])
         #row.extend(['Number of electron-hole pairs created in Silicon_1', 'Number of electron-hole pairs created in Silicon_2'])
