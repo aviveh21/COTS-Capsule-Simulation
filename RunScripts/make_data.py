@@ -88,7 +88,7 @@ def create_runs(input_data,json_number):
         file.close()
         with open("mapping.csv", 'w', newline='') as map_file:
             run_writer = csv.writer(map_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-            run_writer.writerow(['Folder Number', 'Particle', 'Energy', 'Position[X]','Position[Y]','Position[Z]', 'Direction[X]','Direction[Y]','Direction[Z]'])
+            run_writer.writerow(['Folder Number', 'Particle', 'Energy [MeV]', 'Position_X [cm]','Position_Y [cm]','Position_Z [cm]', 'Direction_X','Direction_Y','Direction_Z'])
 
             i = 0
 
