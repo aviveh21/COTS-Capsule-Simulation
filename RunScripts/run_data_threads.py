@@ -49,6 +49,7 @@ def get_locations(content, i, res, detector_size, scintilator_size , scint_1_cen
     enter_ordered = ['']* const_slabs * 3
     exit_ordered = ['']* const_slabs * 3
     total_energy = ['']* const_slabs
+    stop_location = None
     for j in range(const_slabs):
         scint_zdim[j]= [scint_1_center-scintilator_size/2 + detector_size*j, scint_1_center+scintilator_size/2 + detector_size*j]
     #old_len = len(res)
