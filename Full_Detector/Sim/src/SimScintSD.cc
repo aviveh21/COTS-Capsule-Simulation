@@ -40,6 +40,7 @@
 #include "G4ios.hh"
 #include "G4VProcess.hh"
 #include "FilePrinter.hh"
+#include <G4ThreeVector.hh>
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -70,6 +71,12 @@ void SimScintSD::Initialize(G4HCofThisEvent* hitsCE){
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 G4bool SimScintSD::ProcessHits(G4Step* aStep,G4TouchableHistory* ){
   static G4double fTotalEnergy = 0;
+  static G4ThreeVector current_location;
+  static G4ThreeVector prev_location;
+  static G4double range = 0;
+  static G4double rho = 1.023; // specific! change for different setups
+  static G4double let = 0;
+  static G4double max_let = 0;
   G4double edep = aStep->GetTotalEnergyDeposit();
   if(edep==0.) return false; //No edep so dont count as hit
 
@@ -86,12 +93,25 @@ G4bool SimScintSD::ProcessHits(G4Step* aStep,G4TouchableHistory* ){
       G4cout << "Particle Volume: " << aStep->GetTrack()->GetVolume()->GetLogicalVolume()->GetName() << G4endl;
       G4cout << "Particle Name: " << aStep->GetTrack()->GetParticleDefinition()->GetParticleName() << G4endl;
       G4cout << "Enter Location: " << (preStep->GetPosition()) << G4endl;
+      prev_location = preStep->GetPosition();
     }
 
     fTotalEnergy += edep;
-    G4cout << "Current step energy: " << edep/CLHEP::keV << G4endl;
+    G4cout << "Current step energy: " << edep << G4endl;
+    G4cout << "Total energy until current step: " << fTotalEnergy << G4endl;
+    ss << "Total energy until current step: " << fTotalEnergy << G4endl;
+    current_location = aStep->GetTrack()->GetPosition();
+    range = (current_location - prev_location).mag();
+    let = edep/range/rho/100;
+    G4cout << "LET in current step: " << let << G4endl;
+    ss << "LET in current step: " << let << G4endl;
+    if (max_let < let) max_let = let;
+    G4cout << "Max LET until current step: " << max_let << G4endl;
+    ss << "Max LET until current step: " << max_let << G4endl;
+
     ss << "Current Location: " << aStep->GetTrack()->GetPosition() << G4endl;
     G4cout << "Current Location: " << aStep->GetTrack()->GetPosition() << G4endl;
+    prev_location = current_location;
 
     if (aStep->IsLastStepInVolume())
     {
@@ -99,8 +119,11 @@ G4bool SimScintSD::ProcessHits(G4Step* aStep,G4TouchableHistory* ){
       G4cout << "Particle Volume: " << aStep->GetTrack()->GetVolume()->GetLogicalVolume()->GetName() << G4endl;
       ss << "Exit Location: " << aStep->GetTrack()->GetPosition() << G4endl;
       G4cout << "Exit Location: " << aStep->GetTrack()->GetPosition() << G4endl;
-      ss << "Total energy deposited: " << fTotalEnergy / CLHEP::keV << G4endl;
-      G4cout << "Total energy deposited: " << fTotalEnergy / CLHEP::keV << G4endl;
+      ss << "Total energy deposited: " << fTotalEnergy << G4endl;
+      G4cout << "Total energy deposited: " << fTotalEnergy << G4endl;
+      G4cout << "Max LET: " << max_let << G4endl;
+      ss << "Max LET: " << max_let << G4endl;
+
     }
   }
 
