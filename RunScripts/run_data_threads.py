@@ -166,6 +166,7 @@ def get_locations(content, i, res, detector_size, scintilator_size , scint_1_cen
             res.append('')
         else:
             res.append(total_energy[j])
+    for j in range(const_slabs):
         if max_let[j] == '':
             res.append('')
         else:

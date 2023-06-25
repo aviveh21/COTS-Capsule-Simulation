@@ -87,6 +87,7 @@ G4bool SimScintSD::ProcessHits(G4Step* aStep,G4TouchableHistory* ){
     if (aStep->IsFirstStepInVolume() && preStep->GetStepStatus() == fGeomBoundary)
     {
       fTotalEnergy = 0;
+      max_let = 0;
       ss << "Particle Volume: " << aStep->GetTrack()->GetVolume()->GetLogicalVolume()->GetName() << G4endl;
       ss << "Particle Name: " << aStep->GetTrack()->GetParticleDefinition()->GetParticleName() << G4endl;
       ss << "Enter Location: " << (preStep->GetPosition()) << G4endl;
