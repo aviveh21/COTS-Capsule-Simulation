@@ -49,6 +49,7 @@ def get_locations(content, i, res, detector_size, scintilator_size , scint_1_cen
     enter_ordered = ['']* const_slabs * 3
     exit_ordered = ['']* const_slabs * 3
     total_energy = ['']* const_slabs
+    max_let = ['']* const_slabs
     stop_location = None
     for j in range(const_slabs):
         scint_zdim[j]= [scint_1_center-scintilator_size/2 + detector_size*j, scint_1_center+scintilator_size/2 + detector_size*j]
@@ -71,21 +72,39 @@ def get_locations(content, i, res, detector_size, scintilator_size , scint_1_cen
             #res.append(content[i][16:])
             #21/01/23 Aviv changed for the exit_location
             # NUMBER_OF_SLABS -= 1
+        # only when particle is stopping inside a scint
         elif "Current Location" in content[i] and "Number of" in content[i+1]:
             stop_location = content[i][18:]
+            # searching for the z-axis element, and then reversing the string so we find only the z-dim between the ',' and the ')', as there is another ',' before the first one
+            zdim_exit = re.search('\)(.*?)\,', content[i][18:][::-1]).group(1)[::-1]
+            # checking which scint are we parsing now
+            for j in range(const_slabs):
+                if float(zdim_exit)/10 <= (float(scint_zdim[j][1])+0.2) and float(zdim_exit)/10 >= (float(scint_zdim[j][0])-0.2):
+                    if "Total energy deposited" in content[i-3]:
+                        x = re.search("[0-9'.']+['e']?['+']?|['\-']?(?:[0-9]+)",content[i-3])
+                        # x = re.search("[0-9'.']+", content[i+1])
+                        total_energy[j] = x.group(0) if x is not None else ''
+                    if "Max LET" in content[i-1]:
+                        x = re.search("[0-9'.']+['e']?['+']?|['\-']?(?:[0-9]+)",content[i-1])
+                        max_let[j] = x.group(0) if x is not None else ''
+
         elif "Exit Location" in content[i]:
             if NUMBER_OF_SLABS == 0:
                 continue
             # searching for the z-axis element, and then reversing the string so we find only the z-dim between the ',' and the ')', as there is another ',' before the first one
             zdim_exit = re.search('\)(.*?)\,', content[i][15:][::-1]).group(1)[::-1]
+            # checking which scint are we parsing now
             for j in range(const_slabs):
                 if float(zdim_exit)/10 <= (float(scint_zdim[j][1])+0.2) and float(zdim_exit)/10 >= (float(scint_zdim[j][0])-0.2):
                     exit_ordered[j] = content[i][15:]
                     #21/01/23 Aviv included total energy deposition
                     if "Total energy deposited" in content[i+1]:
-                        x = re.search("[0-9'.']+['e']?['+']?(?:[0-9]+)",content[i+1])
+                        x = re.search("[0-9'.']+['e']?['+']?|['\-']?(?:[0-9]+)",content[i+1])
                         # x = re.search("[0-9'.']+", content[i+1])
                         total_energy[j] = x.group(0) if x is not None else ''
+                    if "Max LET" in content[i+2]:
+                        x = re.search("[0-9'.']+['e']?['+']?|['\-']?(?:[0-9]+)",content[i+2])
+                        max_let[j] = x.group(0) if x is not None else ''
             #21/01/23 Aviv changed for the exit_location
             NUMBER_OF_SLABS -= 1
             #21/01/23 Aviv included total energy deposition
@@ -147,6 +166,10 @@ def get_locations(content, i, res, detector_size, scintilator_size , scint_1_cen
             res.append('')
         else:
             res.append(total_energy[j])
+        if max_let[j] == '':
+            res.append('')
+        else:
+            res.append(max_let[j])
 
         #print (enter_ordered[j])
         #res.append(enter_ordered[j]) #03/12/22 Aviv changed to split the  3D enter location to a 3 column for each axis
@@ -311,7 +334,8 @@ if __name__ == "__main__":
             row.extend(['Scint_1 enter location_X [mm]', 'Scint_1 enter location_Y [mm]', 'Scint_1 enter location_Z [mm]', 'Scint_2 enter location_X [mm]', 'Scint_2 enter location_Y [mm]', 'Scint_2 enter location_Z [mm]', 'Scint_3 enter location_X [mm]', 'Scint_3 enter location_Y [mm]', 'Scint_3 enter location_Z [mm]', 'Scint_4 enter location_X [mm]', 'Scint_4 enter location_Y [mm]', 'Scint_4 enter location_Z [mm]', 'Scint_5 enter location_X [mm]', 'Scint_5 enter location_Y [mm]', 'Scint_5 enter location_Z [mm]'])
             row.extend(['Scint_1 exit location_X [mm]', 'Scint_1 exit location_Y [mm]', 'Scint_1 exit location_Z [mm]', 'Scint_2 exit location_X [mm]', 'Scint_2 exit location_Y [mm]', 'Scint_2 exit location_Z [mm]', 'Scint_3 exit location_X [mm]', 'Scint_3 exit location_Y [mm]', 'Scint_3 exit location_Z [mm]', 'Scint_4 exit location_X [mm]', 'Scint_4 exit location_Y [mm]', 'Scint_4 exit location_Z [mm]', 'Scint_5 exit location_X [mm]', 'Scint_5 exit location_Y [mm]', 'Scint_5 exit location_Z [mm]'])
             row.extend(['Stopping Location_X [mm]', 'Stopping Location_Y [mm]', 'Stopping Location_Z [mm]'])
-            row.extend(['Total energy in this scint_1 [KeV]', 'Total energy in this scint_2 [KeV]','Total energy in this scint_3 [KeV]', 'Total energy in this scint_4 [KeV]','Total energy in this scint_5 [KeV]'])
+            row.extend(['Total energy in this scint_1 [MeV]', 'Total energy in this scint_2 [MeV]','Total energy in this scint_3 [MeV]', 'Total energy in this scint_4 [MeV]','Total energy in this scint_5 [MeV]'])
+            row.extend(['Max LET scint_1', 'Max LET scint_2','Max LET scint_3', 'Max LET scint_4','Max LET scint_5'])
             row.extend(['Number of photons created'])
         #row.extend(['Number of electron-hole pairs created in Silicon_1', 'Number of electron-hole pairs created in Silicon_2'])
             row.extend(['Photons absorbed in Scint_1 Top-Right', 'Photons absorbed in Scint_1 Bottom-Left', 'Photons absorbed in Scint_1 Bottom-Right', 'Photons absorbed in Scint_1 Top-Left'])
