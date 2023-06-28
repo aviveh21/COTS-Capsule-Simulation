@@ -73,7 +73,7 @@ G4bool SimScintSD::ProcessHits(G4Step* aStep,G4TouchableHistory* ){
   static G4double fTotalEnergy = 0;
   static G4ThreeVector current_location;
   static G4ThreeVector prev_location;
-  static G4double range = 0;
+  static G4double step_size = 0;
   static G4double rho = 1.023; // specific! change for different setups
   static G4double let = 0;
   static G4double max_let = 0;
@@ -98,14 +98,14 @@ G4bool SimScintSD::ProcessHits(G4Step* aStep,G4TouchableHistory* ){
     }
 
     fTotalEnergy += edep;
+    step_size = aStep->GetTrack()->GetStepLength();
+    G4cout << "Size of step:" << step_size << G4endl;
     G4cout << "Current step energy: " << edep << G4endl;
     G4cout << "Total energy until current step: " << fTotalEnergy << G4endl;
     ss << "Total energy until current step: " << fTotalEnergy << G4endl;
     current_location = aStep->GetTrack()->GetPosition();
-    range = (current_location - prev_location).mag();
-    let = edep/range/rho/100;
+    let = edep/step_size/rho/100;
     G4cout << "LET in current step: " << let << G4endl;
-    ss << "LET in current step: " << let << G4endl;
     if (max_let < let) max_let = let;
     G4cout << "Max LET until current step: " << max_let << G4endl;
     ss << "Max LET until current step: " << max_let << G4endl;
