@@ -72,9 +72,16 @@ def pick_point_on_sphere(r, center):
 
 
 def pick_point_cuboid(corner_far_z, corner_close_z, Alcover_x, Alcover_y):
-    x = Alcover_x * random() - Alcover_x / 2  # -3.5 <-> 3.5
-    y = Alcover_y * random() - Alcover_y / 2  # -3.5 <-> 3.5
-    z = (corner_far_z - corner_close_z) * random() - (-corner_close_z)  # -0.687 <-> 5.543
+    x = Alcover_x * random() - Alcover_x / 2  # -3.5 <-> 3.5cm
+    y = Alcover_y * random() - Alcover_y / 2  # -3.5 <-> 3.5cm
+    z = (corner_far_z - corner_close_z) * random() - (-corner_close_z)  # -0.687 <-> 5.543cm
+    position = np.array([x, y, z])
+    return position
+
+def pick_point_in_chip(center_z_scint_3, chip_size_x, chip_size_y,chip_size_z):
+    x = chip_size_x * random() - chip_size_x / 2  # -size_x/2 <-> size_x/2 (chip is in the middle)
+    y = chip_size_y * random() - chip_size_y / 2  # -size_y/2 <-> size_y/2 (chip is in the middle)
+    z = chip_size_z * random() - chip_size_z / 2 +center_z_scint_3 # center_scint_z + size_z/2 <->  center_scint_z + size_z/2  (chip is in the middle)
     position = np.array([x, y, z])
     return position
 
@@ -92,10 +99,11 @@ if __name__ == "__main__":
     sim_type = 'default'
     aws_bucket = False
     total_runs = False
+    on_chip = None
 
 
     try:
-        opts, args = getopt.getopt(sys.argv[1:],"",['aws-bucket=', 'sim-type=', 'total-runs='])
+        opts, args = getopt.getopt(sys.argv[1:],"",['aws-bucket=', 'sim-type=', 'total-runs=','on-chip='])
     except getopt.GetoptError as err:
         logging.info("%s bad parameters %s", sys.argv[0], err)
         sys.exit(2)
@@ -110,6 +118,13 @@ if __name__ == "__main__":
         elif opt == '--total-runs':
             total_runs = int(arg)
             logging.info("total runs %d", total_runs)
+        elif opt == '--on-chip':
+            if arg == 'True':
+                on_chip = True
+                logging.info("Shooting particles into chip at random")
+            else:
+                on_chip = False
+                logging.info("Shooting particles at random")
         else:
             logging.error("%s bad parameter %s", sys.argv[0], opt)
             sys.exit(2)
@@ -136,6 +151,12 @@ if __name__ == "__main__":
     center_z = (Alcover2_location + Alcover_z / 2 - (Alcover1_location - Alcover_z / 2)) / 2  # 3.115cm
     corner_far_z = Alcover2_location + Alcover_z / 2  # 5.543cm
     corner_close_z = Alcover1_location - Alcover_z / 2  # -0.687cm
+    
+    # paramters of chip to defend and extra
+    chip_size_x = 1.5 # cm
+    chip_size_y = 1.5 # cm
+    chip_size_z = 0.03 # cm or 300 um
+    center_z_scint_3 =((center_z_first_scint + scint_z/2 + detector_size_z*2) + (center_z_first_scint + scint_z/2 + detector_size_z*2))/2  # 2.428cm
 
     ##locations for calculating 
     center = np.array([0, 0, center_z])  # cm
@@ -174,8 +195,11 @@ if __name__ == "__main__":
 
         # position = [0 , 0 , -5 ] # For a beam from the start of the 1st scent, at the center
 
-        ### random point inside the telescope
-        destination = pick_point_cuboid(corner_far_z, corner_close_z, Alcover_x, Alcover_y)
+        ### random point inside the telescope OR inside chip to defend
+        if on_chip:
+            destination = pick_point_in_chip(center_z_scint_3, chip_size_x, chip_size_y,chip_size_z)
+        else:
+            destination = pick_point_cuboid(corner_far_z, corner_close_z, Alcover_x, Alcover_y)
 
         ### calculate the direction
         vector = (destination - position)
