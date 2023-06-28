@@ -21,8 +21,8 @@ args = parser.parse_args()
 # Define the parameters for the spot instances
 # spot_price = '0.1'
 instance_type = 'c6i.4xlarge'
-image_id = 'ami-0755fe9bb49df7805' 
-# image_id = 'ami-04399d968934fdde3'
+# image_id = 'ami-0755fe9bb49df7805' 
+image_id = 'ami-0c42a8b0b28ad6291'
 key_name = args.key_name
 instance_count = args.instance_count
 sim_type = args.sim_type
