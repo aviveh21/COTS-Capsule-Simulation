@@ -11,6 +11,7 @@ import requests
 from datetime import datetime
 import boto3
 from botocore.exceptions import ClientError
+import pathlib
 
 
 
@@ -150,6 +151,18 @@ def read_config_and_start_service_loop(filename):
     logging.info("Starting simulation.")
     start_simulation_and_log_loop(aws_bucket_name, sim_type, total_runs, debug)
 
+
+def upload_stdout_files(simulation_aws_dir, bucket, access_key, secret_key):
+    # Enumerate all directories inside Run_Scripts
+    # Upload every file named run_stdout
+
+    for run_dir, _, filenames in os.walk(RUN_SCRIPTS_DIR + "/" + RESULTS_FOLDER):
+        if "run_stdout.txt" in filenames:
+            path = int(pathlib.PurePath(run_dir).name)
+            object_name = simulation_aws_dir + "stdout/run_stdout_" + str(path) + ".txt"
+            logging.info("Uploading %s to %s", run_dir + "/run_stdout.txt", object_name)
+            upload_file(run_dir + "/run_stdout.txt", bucket, access_key, secret_key, object_name)
+
 def start_simulation_and_log_loop(aws_bucket_name, sim_type, total_runs, debug):
 
     config = configparser.ConfigParser()
@@ -169,9 +182,12 @@ def start_simulation_and_log_loop(aws_bucket_name, sim_type, total_runs, debug):
 
     logging.info("Starting simulation with arguments: " + str(args))
     start_simulation_time = datetime.now().strftime("%m%d%Y%H_%M_%S")
+
+    simulation_aws_dir = "sim_" + sim_type + "_" +  start_simulation_time + "/"
+
     process = subprocess.Popen(args)
 
-    time.sleep(60) 
+    time.sleep(600) 
 
     while process.poll() is None:
         logging.info("Simulation is up and running. Saving partial results.")
@@ -180,7 +196,8 @@ def start_simulation_and_log_loop(aws_bucket_name, sim_type, total_runs, debug):
 
         partial_results_file_name = "partial_results_" + instance_id + "_" + sim_type + "_" + start_simulation_time + ".csv"
         logging.info("Uploading file to S3 bucket %s", aws_bucket_name)
-        upload_file(RUN_SCRIPTS_DIR + "/" + RESULTS_FOLDER + "/final_results.csv", aws_bucket_name, access_key, secret_key, partial_results_file_name)
+        upload_file(RUN_SCRIPTS_DIR + "/" + RESULTS_FOLDER + "/final_results.csv", aws_bucket_name, access_key, secret_key, simulation_aws_dir + partial_results_file_name)
+        upload_stdout_files(simulation_aws_dir, aws_bucket_name, access_key, secret_key)
         logging.info("Done uploading to S3")
         time.sleep(600)
 
@@ -191,11 +208,11 @@ def start_simulation_and_log_loop(aws_bucket_name, sim_type, total_runs, debug):
         collect_results()
         logging.info("Done. Uploading results.")
         final_results_filename = "final_results_" + instance_id + "_" + sim_type + "_" + start_simulation_time + ".csv"
-        upload_file(RUN_SCRIPTS_DIR + "/" + RESULTS_FOLDER + "/final_results.csv", aws_bucket_name, access_key, secret_key, final_results_filename)
-
+        upload_file(RUN_SCRIPTS_DIR + "/" + RESULTS_FOLDER + "/final_results.csv", aws_bucket_name, access_key, secret_key, simulation_aws_dir + final_results_filename)
+        upload_stdout_files(simulation_aws_dir, aws_bucket_name, access_key, secret_key)
         if partial_results_file_name is not False:
             logging.info("Deleting partial results file " + partial_results_file_name)
-            delete_file(partial_results_file_name, aws_bucket_name, access_key, secret_key)
+            delete_file(simulation_aws_dir + partial_results_file_name, aws_bucket_name, access_key, secret_key)
 
         if debug is True:
             logging.info("Debug mode, not shutting down")
