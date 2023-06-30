@@ -13,6 +13,7 @@ parser.add_argument('--instance-count', type=int, required=True, help='Number of
 parser.add_argument('--sim-type', required=True, help='Choose a simulation type (default/high_mem)')
 parser.add_argument('--runs', required=True, type=int, help='Number of simulation runs')
 parser.add_argument('--debug', action='store_true', help='Enable debug mode')
+parser.add_argument('--on-chip', action='store_true', help='Enable on_chip mode')
 
 
 
@@ -21,8 +22,7 @@ args = parser.parse_args()
 # Define the parameters for the spot instances
 # spot_price = '0.1'
 instance_type = 'c6i.4xlarge'
-# image_id = 'ami-0755fe9bb49df7805' 
-image_id = 'ami-0c42a8b0b28ad6291'
+image_id = 'ami-0252aa70b19b9f725'
 key_name = args.key_name
 instance_count = args.instance_count
 sim_type = args.sim_type
@@ -30,9 +30,13 @@ runs = args.runs
 security_group_ids = [ 'sg-0b3decb39d029facf' ]
 
 debug = False
+on_chip = False
 
 if args.debug:
     debug = args.debug
+
+if args.on_chip:
+    on_chip = args.on_chip
 
 user_data = f'''#!/bin/bash
 
@@ -42,6 +46,7 @@ AWS_BUCKET=geant4-sim
 SIMULATION_TYPE={sim_type}
 TOTAL_RUNS={runs}
 DEBUG={debug}
+ON_CHIP={on_chip}
 EOF'''
 
 user_data_b64 = base64.b64encode(user_data.encode('utf-8')).decode('utf-8')

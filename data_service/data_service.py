@@ -129,6 +129,7 @@ def read_config_and_start_service_loop(filename):
     config = False
     total_runs = False
     debug = False
+    on_chip = False
 
     while config is False:
         config = check_config_file_exists_and_valid(filename)
@@ -147,9 +148,14 @@ def read_config_and_start_service_loop(filename):
         if debug:
             logging.info("Debug mode set to true")
 
+    if config.has_option('DEFAULT', 'ON_CHIP'):
+        on_chip = config.getboolean('DEFAULT', 'ON_CHIP')
+        if on_chip:
+            logging.info("On chip mode set to true")
+
 
     logging.info("Starting simulation.")
-    start_simulation_and_log_loop(aws_bucket_name, sim_type, total_runs, debug)
+    start_simulation_and_log_loop(aws_bucket_name, sim_type, total_runs, debug, on_chip)
 
 
 def upload_stdout_files(simulation_aws_dir, bucket, access_key, secret_key):
@@ -159,18 +165,24 @@ def upload_stdout_files(simulation_aws_dir, bucket, access_key, secret_key):
     for run_dir, _, filenames in os.walk(RUN_SCRIPTS_DIR + "/" + RESULTS_FOLDER):
         if "run_stdout.txt" in filenames:
             path = int(pathlib.PurePath(run_dir).name)
-            object_name = simulation_aws_dir + "stdout/run_stdout_" + str(path) + ".txt"
-            logging.info("Uploading %s to %s", run_dir + "/run_stdout.txt", object_name)
-            upload_file(run_dir + "/run_stdout.txt", bucket, access_key, secret_key, object_name)
+            stdout_object_name = simulation_aws_dir + "output/run_stdout_" + str(path) + ".txt"
+            logging.info("Uploading %s to %s", run_dir + "/run_stdout.txt", stdout_object_name)
+            upload_file(run_dir + "/run_stdout.txt", bucket, access_key, secret_key, stdout_object_name)
 
-def start_simulation_and_log_loop(aws_bucket_name, sim_type, total_runs, debug):
+            if os.path.exists(run_dir + "/output/0.txt"):
+                output_object_name = simulation_aws_dir + "output/output_" + str(path) + ".txt"
+                logging.info("Uploading %s to %s", run_dir + "/output/0.txt", output_object_name)
+                upload_file(run_dir + "/output/0.txt", bucket, access_key, secret_key, output_object_name)
+
+
+def start_simulation_and_log_loop(aws_bucket_name, sim_type, total_runs, debug, on_chip):
 
     config = configparser.ConfigParser()
     config.read(AWS_CREDS_LOCATION)
     access_key = config['DEFAULT']['ACCESS_KEY']
     secret_key = config['DEFAULT']['SECRET_KEY']
 
-    args = [SIMULATION_PATH, "--aws-bucket", aws_bucket_name, "--sim-type" ,sim_type]
+    args = [SIMULATION_PATH, "--aws-bucket", aws_bucket_name, "--sim-type" ,sim_type, "--on-chip", str(on_chip)]
 
     instance_id = get_instance_id()
     logging.info("Instance ID is %s", instance_id)
