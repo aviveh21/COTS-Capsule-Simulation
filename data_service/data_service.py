@@ -163,7 +163,7 @@ def upload_stdout_files(simulation_aws_dir, bucket, access_key, secret_key):
     # Upload every file named run_stdout
 
     for run_dir, _, filenames in os.walk(RUN_SCRIPTS_DIR + "/" + RESULTS_FOLDER):
-        if "run_stdout.txt" in filenames:
+        if "run_stdout.txt" in filenames and "finished" in filenames:
             path = int(pathlib.PurePath(run_dir).name)
             stdout_object_name = simulation_aws_dir + "output/run_stdout_" + str(path) + ".txt"
             logging.info("Uploading %s to %s", run_dir + "/run_stdout.txt", stdout_object_name)
@@ -173,6 +173,11 @@ def upload_stdout_files(simulation_aws_dir, bucket, access_key, secret_key):
                 output_object_name = simulation_aws_dir + "output/output_" + str(path) + ".txt"
                 logging.info("Uploading %s to %s", run_dir + "/output/0.txt", output_object_name)
                 upload_file(run_dir + "/output/0.txt", bucket, access_key, secret_key, output_object_name)
+
+            # So we don't upload it again
+            logging.info("Removing the finshed mark from %s", run_dir)
+            os.remove(run_dir + "/finished")
+
 
 
 def start_simulation_and_log_loop(aws_bucket_name, sim_type, total_runs, debug, on_chip):
@@ -195,7 +200,7 @@ def start_simulation_and_log_loop(aws_bucket_name, sim_type, total_runs, debug, 
     logging.info("Starting simulation with arguments: " + str(args))
     start_simulation_time = datetime.now().strftime("%m%d%Y%H_%M_%S")
 
-    simulation_aws_dir = "sim_" + sim_type + "_" +  start_simulation_time + "/"
+    simulation_aws_dir = "sim_" + sim_type + "_" +  instance_id + "_" + start_simulation_time + "/"
 
     process = subprocess.Popen(args)
 

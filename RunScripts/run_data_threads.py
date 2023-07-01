@@ -249,6 +249,11 @@ def get_run_number(run_dir):
     # print(path.name)
     return int(path.name)
 
+def touch_file(filename):
+    with open(filename, 'a'):
+        os.utime(filename, None)
+
+
 def worker_func(run_dir):
     # os.chdir(run_dir)
     with open(f"{run_dir}/run_stdout.txt", 'w') as out_fd:
@@ -256,7 +261,8 @@ def worker_func(run_dir):
         geant_exe_full_path = os.path.abspath(GEANT_EXE_LOCATION)  
         # Must use absolute path of geant, since we change the working directory
         subprocess.run([geant_exe_full_path, run_dir + "/" + INPUT_FILE_NAME], stdout=out_fd, cwd=run_dir)
-        logging.info("Finished simulation %s", run_dir)   
+        logging.info("Finished simulation %s", run_dir)  
+        touch_file(f"{run_dir}/finished") 
  
 
 if __name__ == "__main__":
