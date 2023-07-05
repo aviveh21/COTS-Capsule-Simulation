@@ -81,10 +81,10 @@ def get_locations(content, i, res, detector_size, scintilator_size , scint_1_cen
             for j in range(const_slabs):
                 if float(zdim_exit)/10 <= (float(scint_zdim[j][1])+0.2) and float(zdim_exit)/10 >= (float(scint_zdim[j][0])-0.2):
                     if "Total energy" in content[i-2]:
-                        x = re.search("[0-9'.']+['e']?['+']?|['\-']?(?:[0-9]+)",content[i-2])
+                        x = re.search("-?[0-9]+\.?[0-9]*(?:[Ee][-+]?[0-9]+)?",content[i-2])
                         total_energy[j] = x.group(0) if x is not None else ''
                     if "Max LET" in content[i-1]:
-                        x = re.search("[0-9'.']+['e']?['+']?|['\-']?(?:[0-9]+)",content[i-1])
+                        x = re.search("-?[0-9]+\.?[0-9]*(?:[Ee][-+]?[0-9]+)?",content[i-1])
                         max_let[j] = x.group(0) if x is not None else ''
 
         elif "Exit Location" in content[i]:
@@ -98,11 +98,11 @@ def get_locations(content, i, res, detector_size, scintilator_size , scint_1_cen
                     exit_ordered[j] = content[i][15:]
                     #21/01/23 Aviv included total energy deposition
                     if "Total energy" in content[i+1]:
-                        x = re.search("[0-9'.']+['e']?['+']?|['\-']?(?:[0-9]+)",content[i+1])
+                        x = re.search("-?[0-9]+\.?[0-9]*(?:[Ee][-+]?[0-9]+)?",content[i+1])
                         # x = re.search("[0-9'.']+", content[i+1])
                         total_energy[j] = x.group(0) if x is not None else ''
                     if "Max LET" in content[i+2]:
-                        x = re.search("[0-9'.']+['e']?['+']?|['\-']?(?:[0-9]+)",content[i+2])
+                        x = re.search("-?[0-9]+\.?[0-9]*(?:[Ee][-+]?[0-9]+)?",content[i+2])
                         max_let[j] = x.group(0) if x is not None else ''
             #21/01/23 Aviv changed for the exit_location
             NUMBER_OF_SLABS -= 1
