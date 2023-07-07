@@ -156,7 +156,7 @@ if __name__ == "__main__":
     chip_size_x = 1.5 # cm
     chip_size_y = 1.5 # cm
     chip_size_z = 0.03 # cm or 300 um
-    center_z_scint_3 =((center_z_first_scint + scint_z/2 + detector_size_z*2) + (center_z_first_scint + scint_z/2 + detector_size_z*2))/2  # 2.428cm
+    center_z_scint_3 = center_z_first_scint + detector_size_z*2  # 2.428cm
 
     ##locations for calculating 
     center = np.array([0, 0, center_z])  # cm
