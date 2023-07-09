@@ -243,7 +243,7 @@ if __name__ == "__main__":
         elif particle == "ion_iron":
             particle = "ion"
             ion = [26, 52, 26]
-            energy_range = choices([[700,7000],[7000,2000],[700,150000]],[0.1,0.8,0.1])[0]
+            energy_range = choices([[700,7000],[7000,20000],[20000,150000]],[0.1,0.8,0.1])[0]
             energy = uniform(energy_range[0],energy_range[1])
         elif particle == "proton":
             ion = []
