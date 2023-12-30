@@ -1,5 +1,20 @@
 # Geant4-TAU-SAT
 
+#### 2.10.23 Changelog (Alex)
+Sim geometry update, 2 pmts were placed in a different way (glass forward, pmt backworkd / vice versa. Verify what is correct?)
+The direction of PMT saving is TOP-RIGHT(+,+), TOP-LEFT(-,+), BOTTOM-LEFT(-,-), BOTTOM-RIGHT(+,-). See SimMainVolume.cc
+This affected the weird translation of geant pmt id to the array index. See SimEventAction.cc for this abomination.
+
+Sim compiled statically with geant4, for speed improvement (hopefully)
+Files changed:
+run_data_threads.py
+data_service.py
+run_script_Cosmic_Ray_Sim.py
+SimMainVolume.cc
+SimRunAction.cc
+
+Need to change: Make Geant4 world smaller (the system + 10-15 cm)
+
 ### Update of 2022 - Aviv and Amir - The real COTS-Capsule## Compile
 Create a new `build` folder: `mkdir build`\
 Change dir to new folder: `cd build`\

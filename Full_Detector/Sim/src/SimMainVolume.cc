@@ -163,41 +163,41 @@ SimMainVolume::SimMainVolume(G4RotationMatrix *pRot,
   G4ThreeVector offset;
   // G4ThreeVector loc;
 
-  rm = new G4RotationMatrix(); // far right
-  rm->rotateX(90 * deg);
-  // rm->rotateY(135 * deg);
-  rm->rotateY((135 + 0) * deg);
-  offset = G4ThreeVector(-(sqrt(2) * (distFromCorner)), -(sqrt(2) * (distFromCorner)), 0);
-  new G4PVPlacement(rm, G4ThreeVector(fScint_x / 2., fScint_y / 2., 0) + offset, fPmt_log, "pmt",
-                    fHousing_log, false, k++);
-  fPmtPositions.push_back(G4ThreeVector(fScint_x / 2., fScint_y / 2., 0) + offset);
+    rm = new G4RotationMatrix(); // top right
+    rm->rotateX(90 * deg);
+    // rm->rotateY(135 * deg);
+    rm->rotateY((135 + 0) * deg);
+    offset = G4ThreeVector(-(sqrt(2) * (distFromCorner)), -(sqrt(2) * (distFromCorner)), 0);
+    new G4PVPlacement(rm, G4ThreeVector(fScint_x / 2., fScint_y / 2., 0) + offset, fPmt_log, "pmt",
+                      fHousing_log, false, k++);
+    fPmtPositions.push_back(G4ThreeVector(fScint_x / 2., fScint_y / 2., 0) + offset);
 
-  rm = new G4RotationMatrix(); // far left
-  rm->rotateX(90 * deg);
-  // rm->rotateY(225 * deg);
-  rm->rotateY((225 + 0) * deg);
-  offset = G4ThreeVector(-(sqrt(2) * (distFromCorner)), (sqrt(2) * (distFromCorner)), 0);
-  new G4PVPlacement(rm, G4ThreeVector(fScint_x / 2., -fScint_y / 2., 0) + offset, fPmt_log, "pmt",
-                    fHousing_log, false, k++);
-  fPmtPositions.push_back(G4ThreeVector(fScint_x / 2., -fScint_y / 2., 0) + offset);
+    rm = new G4RotationMatrix(); // top left
+    rm->rotateX(90 * deg);
+    // rm->rotateY(225 * deg);
+    rm->rotateY((225 + 0) * deg);
+    offset = G4ThreeVector((sqrt(2) * (distFromCorner)), -(sqrt(2) * (distFromCorner)), 0);
+    new G4PVPlacement(rm, G4ThreeVector(-fScint_x / 2., fScint_y / 2., 0) + offset, fPmt_log, "pmt",
+                      fHousing_log, false, k++);
+    fPmtPositions.push_back(G4ThreeVector(-fScint_x / 2., fScint_y / 2., 0) + offset);
 
-  rm = new G4RotationMatrix(); // close right
-  rm->rotateX(90 * deg);
-  // rm->rotateY(315 * deg);
-  rm->rotateY((315 + 0) * deg);
-  offset = G4ThreeVector((sqrt(2) * (distFromCorner)), (sqrt(2) * (distFromCorner)), 0);
-  new G4PVPlacement(rm, G4ThreeVector(-fScint_x / 2, -fScint_y / 2., 0) + offset, fPmt_log, "pmt",
-                    fHousing_log, false, k++);
-  fPmtPositions.push_back(G4ThreeVector(-fScint_x / 2, -fScint_y / 2., 0) + offset);
+    rm = new G4RotationMatrix(); // bottom left
+    rm->rotateX(90 * deg);
+    // rm->rotateY(315 * deg);
+    rm->rotateY((315 + 0) * deg);
+    offset = G4ThreeVector((sqrt(2) * (distFromCorner)), (sqrt(2) * (distFromCorner)), 0);
+    new G4PVPlacement(rm, G4ThreeVector(-fScint_x / 2, -fScint_y / 2., 0) + offset, fPmt_log, "pmt",
+                      fHousing_log, false, k++);
+    fPmtPositions.push_back(G4ThreeVector(-fScint_x / 2, -fScint_y / 2., 0) + offset);
 
-  rm = new G4RotationMatrix(); // close left
-  rm->rotateX(90 * deg);
-  // rm->rotateY(45 * deg);
-  rm->rotateY((45 + 0) * deg);
-  offset = G4ThreeVector((sqrt(2) * (distFromCorner)), -(sqrt(2) * (distFromCorner)), 0);
-  new G4PVPlacement(rm, G4ThreeVector(-fScint_x / 2, fScint_y / 2., 0) + offset, fPmt_log, "pmt",
-                    fHousing_log, false, k++);
-  fPmtPositions.push_back(G4ThreeVector(-fScint_x / 2, fScint_y / 2., 0) + offset);
+    rm = new G4RotationMatrix(); // bottom right
+    rm->rotateX(90 * deg);
+    // rm->rotateY(45 * deg);
+    rm->rotateY((45 + 0) * deg);
+    offset = G4ThreeVector(-(sqrt(2) * (distFromCorner)), (sqrt(2) * (distFromCorner)), 0);
+    new G4PVPlacement(rm, G4ThreeVector(fScint_x / 2, -fScint_y / 2., 0) + offset, fPmt_log, "pmt",
+                      fHousing_log, false, k++);
+    fPmtPositions.push_back(G4ThreeVector(fScint_x / 2, -fScint_y / 2., 0) + offset);
 
   fNx = 2;
   fNy = 1;

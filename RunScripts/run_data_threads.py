@@ -344,11 +344,12 @@ if __name__ == "__main__":
             row.extend(['Max LET scint_1', 'Max LET scint_2','Max LET scint_3', 'Max LET scint_4','Max LET scint_5'])
             row.extend(['Number of photons created'])
         #row.extend(['Number of electron-hole pairs created in Silicon_1', 'Number of electron-hole pairs created in Silicon_2'])
-            row.extend(['Photons absorbed in Scint_1 Top-Right', 'Photons absorbed in Scint_1 Bottom-Left', 'Photons absorbed in Scint_1 Bottom-Right', 'Photons absorbed in Scint_1 Top-Left'])
-            row.extend(['Photons absorbed in Scint_2 Top-Right', 'Photons absorbed in Scint_2 Bottom-Left', 'Photons absorbed in Scint_2 Bottom-Right', 'Photons absorbed in Scint_2 Top-Left'])
-            row.extend(['Photons absorbed in Scint_3 Top-Right', 'Photons absorbed in Scint_3 Bottom-Left', 'Photons absorbed in Scint_3 Bottom-Right', 'Photons absorbed in Scint_3 Top-Left'])
-            row.extend(['Photons absorbed in Scint_4 Top-Right', 'Photons absorbed in Scint_4 Bottom-Left', 'Photons absorbed in Scint_4 Bottom-Right', 'Photons absorbed in Scint_4 Top-Left'])
-            row.extend(['Photons absorbed in Scint_5 Top-Right', 'Photons absorbed in Scint_5 Bottom-Left', 'Photons absorbed in Scint_5 Bottom-Right', 'Photons absorbed in Scint_5 Top-Left'])
+            ### CHECK THIS!
+            row.extend(['Photons absorbed in Scint_1 Top-Right', 'Photons absorbed in Scint_1 Top-Left', 'Photons absorbed in Scint_1 Bottom-Left', 'Photons absorbed in Scint_1 Bottom-Right'])
+            row.extend(['Photons absorbed in Scint_2 Top-Right', 'Photons absorbed in Scint_2 Top-Left', 'Photons absorbed in Scint_2 Bottom-Left', 'Photons absorbed in Scint_2 Bottom-Right'])
+            row.extend(['Photons absorbed in Scint_3 Top-Right', 'Photons absorbed in Scint_3 Top-Left', 'Photons absorbed in Scint_3 Bottom-Left', 'Photons absorbed in Scint_3 Bottom-Right'])
+            row.extend(['Photons absorbed in Scint_4 Top-Right', 'Photons absorbed in Scint_4 Top-Left', 'Photons absorbed in Scint_4 Bottom-Left', 'Photons absorbed in Scint_4 Bottom-Right'])
+            row.extend(['Photons absorbed in Scint_5 Top-Right', 'Photons absorbed in Scint_5 Top-Left', 'Photons absorbed in Scint_5 Bottom-Left', 'Photons absorbed in Scint_5 Bottom-Right'])
             output_lines.append(row)
             for run_number, row in enumerate(reader):
                 actual_run_number = run_number + 1

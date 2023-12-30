@@ -1,8 +1,10 @@
 .*
 ssh_keys
 etc
+var
 exclude_sync
 run_spot_instances.py
 local
 sync.sh
+connect.sh
 Full_Detector
