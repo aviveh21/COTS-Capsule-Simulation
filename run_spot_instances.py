@@ -11,6 +11,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--key-name', required=True, help='Name of the EC2 key pair to use')
 parser.add_argument('--instance-count', type=int, required=True, help='Number of instances to launch')
 parser.add_argument('--sim-type', required=True, help='Choose a simulation type (default/high_mem)')
+parser.add_argument('--mode', required=True, help='mode = REGULAR/RANDOM/GRID/RANDOM_GRID')
 parser.add_argument('--runs', required=True, type=int, help='Number of simulation runs')
 parser.add_argument('--debug', action='store_true', help='Enable debug mode')
 parser.add_argument('--on-chip', action='store_true', help='Enable on_chip mode')
@@ -22,12 +23,26 @@ args = parser.parse_args()
 # Define the parameters for the spot instances
 # spot_price = '0.1'
 instance_type = 'c6i.8xlarge'
-image_id = 'ami-0f722e57b64c61129'
+image_id = 'ami-00f795a1c7aedd9bf' #'ami-0f722e57b64c61129'
 key_name = args.key_name
 instance_count = args.instance_count
 sim_type = args.sim_type
 runs = args.runs
+mode = args.mode
 security_group_ids = [ 'sg-0b3decb39d029facf' ]
+
+
+mode='REGULAR'
+x_start=-3.5
+x_end=3.55
+y_start=-3.5
+y_end=3.55
+particle='ion'
+energy=18000 # MeV
+beam_on=1
+grid_step=0.1 # cmd
+ion=[8, 16, 8] # oxygen
+l_runs=5000
 
 debug = False
 on_chip = False
@@ -42,12 +57,32 @@ user_data = f'''#!/bin/bash
 
 tee -a /home/ubuntu/COTS-Capsule-Simulation/data_service/config.ini <<EOF
 [DEFAULT]
-AWS_BUCKET=geant4-sim
+AWS_BUCKET=alex-geant-test
 SIMULATION_TYPE={sim_type}
 TOTAL_RUNS={runs}
 DEBUG={debug}
 ON_CHIP={on_chip}
-EOF'''
+EOF
+
+tee -a /home/ubuntu/COTS-Capsule-Simulation/RunScripts/sim_config.ini <<EOF2
+[DEFAULT]
+MODE={mode}
+# REGULAR (default)/ GRID /RANDOM / RANDOM_GRID. In those cases BEAM_ON will be used as the parameter for beamOn and TOTAL_RUNS ignored
+X_START={x_start}
+# (cm)
+Y_START={y_start}
+X_END={x_end}
+Y_END={y_end}
+STEP={grid_step}
+PARTICLE={particle}           
+# Only in case of grid 
+ENERGY={energy}
+# Energy (MeV)
+ION={ion}
+BEAM_ON={beam_on}
+RUNS={l_runs}
+EOF2
+'''
 
 user_data_b64 = base64.b64encode(user_data.encode('utf-8')).decode('utf-8')
 # Define the tags to apply to the instances
