@@ -248,8 +248,7 @@ void SimEventAction::EndOfEventAction(const G4Event* anEvent){
       G4cout << (*pmtHC)[i]->GetPMTPos() << G4endl;
       G4cout << "PMT-DATA: " << (*pmtHC)[i]->GetPMTPhysVol()->GetInstanceID() << " | " << (*pmtHC)[i]->GetPMTPhysVol()->GetTranslation() << " | " << (*pmtHC)[i]->GetPhotonCount() << G4endl;
 
-      // This is a fixed conversion from the pmt ID to it's index in the pmt's array. This is retarded
-      // and I hope the people who wrote it have to read this code for eternity.
+      // This is a fixed conversion from the pmt ID to it's index in the pmt's array. 
       // This assumes the PMTs are constructed in a very special way. If you move anything it will break.
 
       int id = (*pmtHC)[i]->GetPMTPhysVol()->GetInstanceID();

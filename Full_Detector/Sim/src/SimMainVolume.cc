@@ -157,6 +157,27 @@ SimMainVolume::SimMainVolume(G4RotationMatrix *pRot,
 
   //***********Arrange pmts around the outside of housing**********
 
+//  The axis orientation is as follows:
+//   Using rule of the right hand ( x --> y --> z)
+//   (Arrow means positive direction)
+
+//   X axis:
+//   Left --------------> Right
+
+//   Y axis:
+//   Bottom --------------> Top
+
+//   Z axis:
+//   First scintilator --------------> Last Scintilator
+//   (The Z axis, when looking at Yoav's PHD paper, is "looking from above downwards the scintilator")
+
+//   For example, the top right SiPM is located in:
+//   The positive side of X-axis (right),
+//   The positive side of Y-axis (top)
+//   Notice all SiPMs have offsets to set them inside the scintilator, each offset is in the opposite direction from the one it was located.
+//   For example - the top right SiPM's offset direction is negetive X axis (left), and negetive Y axis (bottom)
+
+
   static G4int k = 0;
 
   G4RotationMatrix *rm;

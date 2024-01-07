@@ -202,18 +202,22 @@ if __name__ == "__main__":
 
         logging.info("Running local configuration mode %s", running_mode)
 
+        particle = config['DEFAULT']['PARTICLE']
+        energy = float(config['DEFAULT']['ENERGY'])
+        beam_on = int(config['DEFAULT']['BEAM_ON'])
+        ion = eval(config['DEFAULT']['ION'])
+
+        x_start = float(config['DEFAULT']['X_START'])
+        y_start = float(config['DEFAULT']['Y_START'])
+        x_end = float(config['DEFAULT']['X_END'])
+        y_end = float(config['DEFAULT']['Y_END'])
+        runs = int(config['DEFAULT']['RUNS'])
+
+
+
         if running_mode == 'GRID' or running_mode == 'RANDOM_GRID':
 
-            particle = config['DEFAULT']['PARTICLE']
-            energy = float(config['DEFAULT']['ENERGY'])
-            beam_on = int(config['DEFAULT']['BEAM_ON'])
-            ion = eval(config['DEFAULT']['ION'])
-
             if running_mode == 'GRID':
-                x_start = float(config['DEFAULT']['X_START'])
-                y_start = float(config['DEFAULT']['Y_START'])
-                x_end = float(config['DEFAULT']['X_END'])
-                y_end = float(config['DEFAULT']['Y_END'])
                 grid_step = float(config['DEFAULT']['STEP'])
 
                 json_number = 0
@@ -226,24 +230,17 @@ if __name__ == "__main__":
                         vector = [0, 0, 1]
                         json_number += 1
                         create_run(json_number, energy, position, vector, particle, ion, beam_on)
-            else:
-                runs = int(config['DEFAULT']['RUNS'])
-                
+            else:            
                 for json_number in range(runs):
-                    x = np.random.uniform(-3.5, 3.5)
-                    y = np.random.uniform(-3.5, 3.5)            
+                    x = np.random.uniform(x_start, x_end)
+                    y = np.random.uniform(x_start, x_end)            
                     position = [x, y, -5]
                     vector = [0, 0, 1]
                     logging.info("Simulating %s at X: %f, Y: %f with %f (MeV), beamOn %d", particle, x, y, energy, beam_on)
                     create_run(json_number + 1, energy, position, vector, particle, ion, beam_on)
 
         elif running_mode == 'RANDOM':
-            particle = config['DEFAULT']['PARTICLE']
-            energy = float(config['DEFAULT']['ENERGY'])
-            beam_on = int(config['DEFAULT']['BEAM_ON'])
-            ion = eval(config['DEFAULT']['ION'])
-            runs = int(config['DEFAULT']['RUNS'])
-
+ 
             for json_number in range(runs):
                 
                 position = pick_point_on_sphere(5.0, np.array([0, 0, corner_close_z]))
@@ -251,8 +248,8 @@ if __name__ == "__main__":
                 if position[2] > 0:
                     position = -position
 
-                x_target = np.random.uniform(-3.5, 3.5)
-                y_target = np.random.uniform(-3.5, 3.5)
+                x_target = np.random.uniform(x_start, x_end)
+                y_target = np.random.uniform(x_start, x_end)
                 z_target = -0.335  ## 1st scintillator bottom
 
                 destination = np.array([x_target, y_target, z_target])
