@@ -11,8 +11,8 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--key-name', required=True, help='Name of the EC2 key pair to use')
 parser.add_argument('--instance-count', type=int, required=True, help='Number of instances to launch')
 parser.add_argument('--sim-type', required=True, help='Choose a simulation type (default/high_mem)')
-parser.add_argument('--mode', required=True, help='mode = REGULAR/RANDOM/GRID/RANDOM_GRID')
-parser.add_argument('--runs', required=True, type=int, help='Number of simulation runs')
+parser.add_argument('--mode', required=False, help='mode = REGULAR/RANDOM/GRID/RANDOM_GRID', default='REGULAR')
+parser.add_argument('--runs', required=True, type=int, help='Number of simulation runs. Not used with grid modes')
 parser.add_argument('--debug', action='store_true', help='Enable debug mode')
 parser.add_argument('--on-chip', action='store_true', help='Enable on_chip mode')
 
@@ -32,7 +32,6 @@ mode = args.mode
 security_group_ids = [ 'sg-0b3decb39d029facf' ]
 
 
-mode='REGULAR'
 x_start=-3.5
 x_end=3.55
 y_start=-3.5
@@ -42,7 +41,7 @@ energy=18000 # MeV
 beam_on=1
 grid_step=0.1 # cmd
 ion=[8, 16, 8] # oxygen
-l_runs=5000
+l_runs=5000 # only for random grid mode
 
 debug = False
 on_chip = False
